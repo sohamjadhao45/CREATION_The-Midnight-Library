@@ -573,3 +573,35 @@ document.addEventListener("DOMContentLoaded", () => {
         const container = document.getElementById("toast-container"); const toast = document.createElement("div"); toast.className = "toast"; toast.innerText = msg; container.appendChild(toast); setTimeout(() => toast.remove(), 3500);
     }
 });
+let deferredPrompt;
+const installBtn = document.getElementById('installAppBtn');
+
+// Jab browser app install karne ke liye ready ho, tab yeh event chalega
+window.addEventListener('beforeinstallprompt', (e) => {
+  // Puraane default pop-up ko rok do
+  e.preventDefault();
+  // Event ko save kar lo taaki button click par use kar sakein
+  deferredPrompt = e;
+  // Apna custom install button dikha do
+  installBtn.style.display = 'block';
+});
+
+// Jab user tere 'INSTALL APP' button par click kare
+installBtn.addEventListener('click', async () => {
+  if (deferredPrompt) {
+    // Woh (Cancel / Install) wala pop-up screen par laao
+    deferredPrompt.prompt();
+    
+    // Check karo user ne Install kiya ya Cancel
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      console.log('App install ho gaya!');
+    } else {
+      console.log('User ne Cancel kar diya.');
+    }
+    
+    // Ek baar pop-up aane ke baad use hata do
+    deferredPrompt = null;
+    installBtn.style.display = 'none';
+  }
+});
