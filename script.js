@@ -136,7 +136,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 localStorage.setItem("midnightVisitor", name);
                 globalState.visitorName = name;
                 
-                // Update Greetings
                 const greeting = document.getElementById("vault-greeting");
                 if(greeting) greeting.innerHTML = `Ah, <span style="color:var(--gold);">${name}</span>... welcome to the Secret Vault.`;
 
@@ -145,7 +144,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 document.getElementById("intro-screen").classList.add("fade-out");
                 
-                // Start Ambient Audio
                 if(audioAmbient && !globalState.isAudioPlaying) {
                     audioAmbient.volume = 0.2;
                     audioAmbient.play().catch(e => console.log("Audio play blocked"));
@@ -231,7 +229,6 @@ document.addEventListener("DOMContentLoaded", () => {
         
         bookshelf.innerHTML += `<div class="book-spine spine-locked interactive-locked" title="Some stories are still being lived."><div class="spine-text">${UPCOMING_CHAPTER.title}</div><div class="spine-subtext" style="position: absolute; bottom: 10px; width: 100%; text-align: center; font-size: 8px; color: rgba(255,255,255,0.4);">UNAVAILABLE</div></div>`;
 
-        // Star Map logic
         if(starMap) {
             let svgLines = ''; let starsHtml = '';
             for (let i = 0; i < POEM_DATABASE.length; i++) {
@@ -248,7 +245,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if(authorScripting) authorScripting.innerHTML = `<span class="pulse-dot"></span><strong>Currently Scripting:</strong> Chapter ${UPCOMING_CHAPTER.chapterNum}: ${UPCOMING_CHAPTER.title}`;
     }
 
-    // Midnight Thought Generator
     const thoughtBtn = document.getElementById("reveal-thought-btn");
     const thoughtDisplay = document.getElementById("midnight-thought-display");
     if(thoughtBtn && thoughtDisplay) {
@@ -330,7 +326,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function initLedger() {
-        // Re-run this setup when dynamically building pages
         const ledgerList = document.getElementById("ledger-list"); 
         let entries = JSON.parse(localStorage.getItem('midnightLedger') || '[]');
         
@@ -347,7 +342,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         renderLedger();
 
-        // Attach events to all submits (both in Notes Room and Inline Poems)
         document.body.addEventListener('click', (e) => {
             if(e.target.classList.contains('ledger-submit')) {
                 const parentDiv = e.target.closest('.visitor-journal');
@@ -434,16 +428,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     textContainer.style.opacity = '1';
                     textContainer.style.pointerEvents = 'auto';
                     
-                    // Trigger typewriter for this specific container
                     const typewriterEl = textContainer.querySelector('.typewriter-poem');
                     if (typewriterEl) {
-                        setTimeout(() => initTypewriterEngine(typewriterEl), 500); // Wait for fade in
+                        setTimeout(() => initTypewriterEngine(typewriterEl), 500); 
                     }
                 }
-                return; // Stop other nav logic
+                return; 
             }
 
-            // General Navigation
+            // General Navigation & Tab Highlight Shift
             if(e.target.classList.contains('trigger-nav')) {
                 if(audioPageTurn) {
                     audioPageTurn.currentTime = 0;
@@ -454,24 +447,26 @@ document.addEventListener("DOMContentLoaded", () => {
                 const newPage = document.getElementById(target);
                 if(newPage) newPage.classList.add('active');
                 
+                // --- 🟢 FIXED: BOTTOM NAVIGATION TAB SHIFT ---
+                document.querySelectorAll('.nav-link').forEach(nav => nav.classList.remove('active-nav'));
+                const newActiveNav = document.querySelector(`.nav-link[data-target="${target}"]`);
+                if(newActiveNav) newActiveNav.classList.add('active-nav');
+                
                 if(target === "page-fragments") {
                     globalState.notesVisitCount++;
                     checkUltimateVault();
                 }
             }
             
-            // Favourites Button
             if(e.target.classList.contains('resonate-btn')) {
                 const title = e.target.getAttribute('data-poem');
                 showToast(`❤️ "${title}" added to your saved echoes.`);
             }
 
-            // Bookmarks Button
             if(e.target.classList.contains('bookmark-btn')) {
                 showToast(`🔖 Bookmark placed.`);
             }
 
-            // Share Button
             if(e.target.classList.contains('share-poem-btn')) {
                 const title = e.target.getAttribute('data-poem-title');
                 if (navigator.share) {
@@ -534,7 +529,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Modern Typewriter Engine using WeakMap
     function initTypewriterEngine(el) {
         if (!twStates.has(el)) {
             twStates.set(el, { lineIndex: 0, charIndex: 0, outHtml: "", status: "unstarted" });
