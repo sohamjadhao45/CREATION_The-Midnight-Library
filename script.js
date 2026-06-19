@@ -43,7 +43,6 @@ document.addEventListener("DOMContentLoaded", () => {
     initClockAndAtmosphere(); 
     initUltimateUniverseBackground(); 
     initCosmicNavigation(); 
-    initLibraryFeatures(); 
     initScrollProgressBar(); 
     initSecretKeyboardVault(); 
     initLedger();
@@ -54,6 +53,29 @@ document.addEventListener("DOMContentLoaded", () => {
     init1111Wish(); 
     initZenMode();
     initFeedbackModal();
+
+    // App Install PWA Script
+    let deferredPrompt;
+    const installBtn = document.getElementById('installAppBtn');
+    if (installBtn) {
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installBtn.style.display = 'inline-block';
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    console.log('App install ho gaya!');
+                }
+                deferredPrompt = null;
+                installBtn.style.display = 'none';
+            }
+        });
+    }
 
     function initTimeGreeting() {
         const greetingEl = document.getElementById("time-greeting");
@@ -91,6 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function initTouchRipple() {
         document.body.addEventListener('click', (e) => {
+            if(e.target.tagName === 'BUTTON' || e.target.tagName === 'A') return;
             const ripple = document.createElement('div');
             ripple.className = 'touch-ripple';
             ripple.style.left = e.clientX + 'px';
@@ -164,15 +187,29 @@ document.addEventListener("DOMContentLoaded", () => {
                 <button class="bookmark-btn btn-utility" data-poem="${poem.spineLabel}" style="border: none; background: transparent; padding: 0 !important; cursor: pointer; color: var(--gold);">🔖 Bookmark</button>
               </div>
               <div class="poetry-box antique-parchment dynamic-shadow" id="card-${pageId}">
-                <div class="wax-seal-wrapper"><div class="wax-seal"><div class="seal-ring"></div><span class="seal-letter">SJ</span></div></div>
-                <p class="royal-poem-text typewriter-poem" data-lines="${safeText}"></p><br>
-                <p class="poem-date">${poem.dateText}</p>
-                <span class="poem-greatvibes sign-animate">${poem.signature}</span>
-                <div class="poem-interactions">
-                    <button class="resonate-btn" data-poem="${cleanTitle}">⭐ Resonated With Me</button>
-                    <button class="listen-btn" title="Future Feature">🎙️ Listen: SOON</button>
+                <div class="wax-seal-wrapper seal-clickable" data-target-text="text-${pageId}">
+                    <div class="wax-seal" title="Click to break seal">
+                        <div class="seal-ring"></div>
+                        <span class="seal-letter">SJ</span>
+                    </div>
+                </div>
+                
+                <div class="poem-text-container" id="text-${pageId}" style="opacity: 0; pointer-events: none; transition: opacity 1.5s ease;">
+                    <p class="royal-poem-text typewriter-poem" data-lines="${safeText}"></p><br>
+                    <p class="poem-date">${poem.dateText}</p>
+                    <span class="poem-greatvibes sign-animate">${poem.signature}</span>
+                    <div class="poem-interactions mt-20">
+                        <button class="resonate-btn" data-poem="${cleanTitle}">⭐ Resonated With Me</button>
+                        <button class="listen-btn" title="Future Feature">🎙️ Listen: SOON</button>
+                    </div>
+                    
+                    <div class="visitor-journal mt-20" style="max-width: 100%; border-top: 1px dashed rgba(191,164,111,0.3); padding-top: 15px;">
+                       <input type="text" placeholder="Write something memorable..." class="journal-input ledger-input inline-poem-feedback" style="z-index: 10; position: relative;">
+                       <button class="journal-submit ledger-submit" style="z-index: 10; position: relative;">🖋️</button>
+                    </div>
                 </div>
               </div>
+
               <div class="button-row" style="margin-top: 15px;">
                 <button class="btn-utility download-poem-btn" data-target="card-${pageId}" data-poem-index="${i}">📸 Save As A Memory</button>
                 <button class="btn-utility share-poem-btn" data-poem-title="${cleanTitle}">🔗 Share Verse</button>
@@ -293,9 +330,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function initLedger() {
+        // Re-run this setup when dynamically building pages
         const ledgerList = document.getElementById("ledger-list"); 
-        const submits = document.querySelectorAll(".ledger-submit"); 
-        const inputs = document.querySelectorAll(".ledger-input");
         let entries = JSON.parse(localStorage.getItem('midnightLedger') || '[]');
         
         function renderLedger() {
@@ -311,9 +347,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         renderLedger();
 
-        submits.forEach((btn, index) => {
-            btn.addEventListener("click", () => {
-                const input = inputs[index];
+        // Attach events to all submits (both in Notes Room and Inline Poems)
+        document.body.addEventListener('click', (e) => {
+            if(e.target.classList.contains('ledger-submit')) {
+                const parentDiv = e.target.closest('.visitor-journal');
+                const input = parentDiv.querySelector('.ledger-input');
                 if(input && input.value.trim() !== "") {
                     entries.unshift({ text: input.value.trim(), date: new Date().toLocaleDateString("en-US", { month: 'short', day: 'numeric', year: 'numeric' }) });
                     if(entries.length > 10) entries.pop(); 
@@ -322,7 +360,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     showToast("🖋️ Your silence has been recorded."); 
                     renderLedger();
                 }
-            });
+            }
         });
     }
 
@@ -381,6 +419,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function initCosmicNavigation() {
         document.body.addEventListener('click', (e) => {
+            
+            // --- SEAL CLICK LOGIC ---
+            const sealWrapper = e.target.closest('.seal-clickable');
+            if (sealWrapper && !sealWrapper.classList.contains('broken')) {
+                sealWrapper.classList.add('broken');
+                sealWrapper.style.opacity = '0';
+                sealWrapper.style.pointerEvents = 'none';
+                
+                const targetTextId = sealWrapper.getAttribute('data-target-text');
+                const textContainer = document.getElementById(targetTextId);
+                
+                if (textContainer) {
+                    textContainer.style.opacity = '1';
+                    textContainer.style.pointerEvents = 'auto';
+                    
+                    // Trigger typewriter for this specific container
+                    const typewriterEl = textContainer.querySelector('.typewriter-poem');
+                    if (typewriterEl) {
+                        setTimeout(() => initTypewriterEngine(typewriterEl), 500); // Wait for fade in
+                    }
+                }
+                return; // Stop other nav logic
+            }
+
             // General Navigation
             if(e.target.classList.contains('trigger-nav')) {
                 if(audioPageTurn) {
@@ -392,7 +454,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 const newPage = document.getElementById(target);
                 if(newPage) newPage.classList.add('active');
                 
-                // Track Notes Room visits
                 if(target === "page-fragments") {
                     globalState.notesVisitCount++;
                     checkUltimateVault();
@@ -421,12 +482,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
-            // Rain Toggle
-            if(e.target.id === 'rain-toggle') {
-                toggleRain();
-            }
+            if(e.target.id === 'rain-toggle') toggleRain();
 
-            // Moon phase tap for secret
             if(e.target.id === 'moon-phase') {
                 globalState.secretClicks++;
                 if(globalState.secretClicks >= 3 && !globalState.hasTappedMoon) {
@@ -436,12 +493,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
-            // Close Favourites/Bookmarks Drawers
             if(e.target.id === 'close-drawer' || e.target.id === 'close-fav-drawer') {
                 document.querySelectorAll('.drawer').forEach(d => d.style.right = '-350px');
             }
 
-            // Open Drawers
             if(e.target.id === 'open-bookmarks-btn') {
                 const d = document.getElementById('bookmarks-drawer');
                 if(d) d.style.right = '0';
@@ -451,7 +506,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 if(d) d.style.right = '0';
             }
 
-            // Theme Toggle
             if(e.target.id === 'theme-toggle') {
                 const html = document.documentElement;
                 if(globalState.activeTheme === "dark") {
@@ -465,7 +519,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
-            // Reading/Focus Mode
             if(e.target.id === 'reading-mode-toggle') {
                 document.body.classList.toggle('focus-mode');
                 const exitBtn = document.getElementById('exit-focus-btn');
@@ -477,15 +530,6 @@ document.addEventListener("DOMContentLoaded", () => {
             if(e.target.id === 'exit-focus-btn') {
                 document.body.classList.remove('focus-mode');
                 e.target.style.display = 'none';
-            }
-
-            // Typewriter Animation trigger
-            if(e.target.classList.contains('trigger-nav')) {
-                const activePage = document.querySelector('.page.active');
-                if(activePage) {
-                    const typewriters = activePage.querySelectorAll('.typewriter-poem');
-                    typewriters.forEach(el => initTypewriterEngine(el));
-                }
             }
         });
     }
@@ -501,7 +545,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const text = el.getAttribute("data-lines");
         if (!text) return;
         const lines = text.split('\\n');
-        const signEl = el.parentElement.querySelector(".sign-animate");
+        const signEl = el.closest('.poem-text-container').querySelector(".sign-animate");
 
         if (state.status === "finished" || el.dataset.animated === "true") { 
             if(signEl) { signEl.style.width = "100%"; signEl.style.borderColor = "transparent"; signEl.classList.add("show-instantly"); }
@@ -552,7 +596,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if(signEl) { signEl.style.width = "100%"; signEl.style.borderColor = "transparent"; signEl.classList.add("show-instantly"); }
             }
         }
-        setTimeout(typeWriter, 200);
+        typeWriter();
     }
 
     let drops = [];
@@ -631,14 +675,6 @@ document.addEventListener("DOMContentLoaded", () => {
         drawUniverse();
     }
 
-    function initLibraryFeatures() {
-        const dateSpan = document.getElementById('journal-date');
-        if(dateSpan) {
-            const now = new Date();
-            dateSpan.innerText = `Journal Entry: ${now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`;
-        }
-    }
-
     function showToast(msg) {
         const t = document.createElement('div');
         t.className = 'toast'; 
@@ -650,9 +686,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // ==========================================
-    // Feedback Modal Logic (Leave a Trace)
-    // ==========================================
     function initFeedbackModal() {
         const openBtn = document.getElementById('open-feedback-btn');
         const closeBtn = document.getElementById('close-feedback-btn');
@@ -676,7 +709,6 @@ document.addEventListener("DOMContentLoaded", () => {
             submitBtn.addEventListener('click', () => {
                 const feedbackText = input.value;
                 if(feedbackText.trim() !== '') {
-                    // Yahan database ka logic ayega future mein
                     alert("Your words have been left in the library. Thank you.");
                     modal.style.display = 'none';
                     input.value = '';
