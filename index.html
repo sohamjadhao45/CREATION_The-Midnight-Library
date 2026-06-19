@@ -1,11 +1,14 @@
+<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CREATION — The Midnight Library</title>
   <link rel="stylesheet" href="style.css">
+  
   <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#bfa46f">
+  <meta name="theme-color" content="#bfa46f">
+  <link rel="icon" type="image/png" href="icon.png">
 </head>
 <body class="custom-cursor">
 
@@ -193,23 +196,31 @@
       <p class="poem-subtitle">RAW SILENT FRAGMENTS</p>
       <div class="poetry-box antique-parchment dynamic-shadow" style="pointer-events: auto;">
           
-          <div class="wax-seal-wrapper"><div class="wax-seal"><div class="seal-ring"></div><span class="seal-letter">SJ</span></div></div>
-          
-          <div class="fragment-item"><span class="drop-cap-antique mini-cap">"</span><p class="poem-playfair" id="combo-quote-1">The hardest goodbyes are the ones that happen quietly.</p></div>
-          <div class="box-star">────── ✦ ──────</div>
-          <div class="fragment-item"><span class="drop-cap-antique mini-cap">"</span><p class="poem-playfair" id="combo-quote-2">Some people become memories before they leave.</p></div>
-          <div class="box-star">────── ✦ ──────</div>
-          <div class="fragment-item"><span class="drop-cap-antique mini-cap">"</span><p class="poem-playfair" id="combo-quote-3">Happiness often arrives disguised as ordinary moments.</p></div>
-
-          <div class="visitor-ledger mt-20" style="border-top: 1px solid var(--parchment-border); padding-top: 20px; margin-top: 30px; position: relative; z-index: 999;">
-              <h4 style="font-family: 'Cinzel'; font-size: 14px; letter-spacing: 2px; color: var(--parchment-text); opacity: 0.9; margin-bottom: 15px;">🕯️ The Visitor Ledger</h4>
-              <div id="ledger-list" style="max-height: 120px; overflow-y: auto; text-align: left; font-family: 'Cormorant Garamond'; font-size: 15px; color: var(--parchment-text); opacity: 0.8; padding-right: 10px; margin-bottom: 15px;"></div>
-              
-              <div class="visitor-journal" style="max-width: 100%; border-top: 1px dashed rgba(191,164,111,0.3); padding-top: 15px;">
-                 <input type="text" placeholder="Leave your mark here..." class="journal-input ledger-input" style="z-index: 100; position: relative;">
-                 <button class="journal-submit ledger-submit" style="z-index: 100; position: relative;">🖋️</button>
+          <div class="wax-seal-wrapper seal-clickable" data-target-text="notes-room-content">
+              <div class="wax-seal" title="Click to break seal">
+                  <div class="seal-ring"></div>
+                  <span class="seal-letter">SJ</span>
               </div>
           </div>
+          
+          <div id="notes-room-content" style="opacity: 0; pointer-events: none; transition: opacity 1.5s ease;">
+              <div class="fragment-item"><span class="drop-cap-antique mini-cap">"</span><p class="poem-playfair" id="combo-quote-1">The hardest goodbyes are the ones that happen quietly.</p></div>
+              <div class="box-star">────── ✦ ──────</div>
+              <div class="fragment-item"><span class="drop-cap-antique mini-cap">"</span><p class="poem-playfair" id="combo-quote-2">Some people become memories before they leave.</p></div>
+              <div class="box-star">────── ✦ ──────</div>
+              <div class="fragment-item"><span class="drop-cap-antique mini-cap">"</span><p class="poem-playfair" id="combo-quote-3">Happiness often arrives disguised as ordinary moments.</p></div>
+
+              <div class="visitor-ledger mt-20" style="border-top: 1px solid var(--parchment-border); padding-top: 20px; margin-top: 30px; position: relative; z-index: 999;">
+                  <h4 style="font-family: 'Cinzel'; font-size: 14px; letter-spacing: 2px; color: var(--parchment-text); opacity: 0.9; margin-bottom: 15px;">🕯️ The Visitor Ledger</h4>
+                  <div id="ledger-list" style="max-height: 120px; overflow-y: auto; text-align: left; font-family: 'Cormorant Garamond'; font-size: 15px; color: var(--parchment-text); opacity: 0.8; padding-right: 10px; margin-bottom: 15px;"></div>
+                  
+                  <div class="visitor-journal" style="max-width: 100%; border-top: 1px dashed rgba(191,164,111,0.3); padding-top: 15px;">
+                     <input type="text" placeholder="Leave your mark here..." class="journal-input ledger-input" style="z-index: 100; position: relative;">
+                     <button class="journal-submit ledger-submit" style="z-index: 100; position: relative;">🖋️</button>
+                  </div>
+              </div>
+          </div>
+
       </div>
       <div class="button-row">
           <button id="btn-frag-prev" class="btn-outline trigger-nav">❮ Previous</button>
