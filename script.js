@@ -8,7 +8,6 @@ const twStates = new WeakMap();
 document.addEventListener("DOMContentLoaded", () => {
     "use strict";
 
-    // 🟢 AB POEMS YAHAN KHALI HAIN, DATA JSON SE AAYEGA!
     let POEM_DATABASE = []; 
     const UPCOMING_CHAPTER = { chapterNum: "IV", title: "THE UNSEEN REALM" };
 
@@ -17,7 +16,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const midnightThoughts = ["The moon has seen every version of you.", "Not every chapter deserves a sequel.", "Some memories glow brighter after they're gone.", "The hardest part of moving forward is not looking back.", "We bury our loudest screams in the quietest poetry."];
     const moonWords = ["silence", "poetry", "creation", "memories", "love", "solitude", "eternity"];
     
-    // Star map ke liye extra coordinates daal diye hain future poems ke liye
     const starCoords = [
         {top: 50, left: 20}, {top: 20, left: 50}, {top: 60, left: 80}, 
         {top: 80, left: 40}, {top: 30, left: 85}, {top: 75, left: 15},
@@ -28,17 +26,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const audioRain = document.getElementById("audio-rain");
     const audioAmbient = document.getElementById("audio-ambient");
 
-    // 🟢 FETCH FUNCTION: Yeh tere JSON file se data layega
+    // 🟢 FETCH FUNCTION
     async function loadLibraryData() {
         try {
-            const response = await fetch('poems.json'); // File khinch raha hai
+            const response = await fetch('poems.json'); 
             if (!response.ok) throw new Error("Network response was not ok");
             
-            POEM_DATABASE = await response.json(); // Data array mein save ho gaya
+            POEM_DATABASE = await response.json(); 
             
-            // Data aane ke baad Library banayenge
             buildLibrarySystem(); 
-            initLedger(); // Ledger ko bhi naye elements ke hisaab se bind karenge
+            initLedger(); 
         } catch (error) {
             console.error("Error loading the Midnight Library Archives:", error);
             const bookshelf = document.getElementById("dynamic-bookshelf");
@@ -46,7 +43,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Initialize core non-dynamic features
     initTimeGreeting();
     initClockAndAtmosphere(); 
     initUltimateUniverseBackground(); 
@@ -61,7 +57,6 @@ document.addEventListener("DOMContentLoaded", () => {
     initZenMode();
     initFeedbackModal();
 
-    // 🟢 Start Loading Data
     loadLibraryData();
 
     // App Install PWA Script
@@ -83,8 +78,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
-
-    // --------- BAQI SAARE FUNCTIONS PEHLE JAISE HAIN ---------
 
     function initTimeGreeting() {
         const greetingEl = document.getElementById("time-greeting");
@@ -169,14 +162,18 @@ document.addEventListener("DOMContentLoaded", () => {
         
         if(!nav || !bookshelf || !secretPage) return;
 
-        nav.innerHTML = `<button class="nav-link active-nav" data-target="page1">Library Entrance</button>`; 
+        // 🟢 FIX: Added 'trigger-nav' class so the bottom strip works!
+        nav.innerHTML = `<button class="nav-link active-nav trigger-nav" data-target="page1">Library Entrance</button>`; 
         bookshelf.innerHTML = ""; 
         let prevPageId = "page1";
 
         POEM_DATABASE.forEach((poem, i) => {
             const pageId = `poem-page-${i + 1}`; 
             const nextPageId = i < POEM_DATABASE.length - 1 ? `poem-page-${i + 2}` : `page-fragments`;
-            nav.innerHTML += `<button class="nav-link" data-target="${pageId}">${poem.chapterLabel}</button>`;
+            
+            // 🟢 FIX: Added 'trigger-nav' here too
+            nav.innerHTML += `<button class="nav-link trigger-nav" data-target="${pageId}">${poem.chapterLabel}</button>`;
+            
             const cleanTitle = poem.title.replace('<br>', ' '); 
             const safeText = poem.text.replace(/\n/g, '\\n');
 
@@ -226,7 +223,8 @@ document.addEventListener("DOMContentLoaded", () => {
             prevPageId = pageId;
         });
 
-        nav.innerHTML += `<button class="nav-link" data-target="page-fragments">Notes Room</button><button class="nav-link" data-target="page-archive">Ancient Shelf</button><button class="nav-link" data-target="page-about">Author's Chamber</button>`;
+        // 🟢 FIX: Added 'trigger-nav' to remaining strip buttons
+        nav.innerHTML += `<button class="nav-link trigger-nav" data-target="page-fragments">Notes Room</button><button class="nav-link trigger-nav" data-target="page-archive">Ancient Shelf</button><button class="nav-link trigger-nav" data-target="page-about">Author's Chamber</button>`;
         
         const btnExplore = document.getElementById("btn-explore");
         if(btnExplore) btnExplore.setAttribute("data-target", "poem-page-1"); 
@@ -239,7 +237,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if(starMap) {
             let svgLines = ''; let starsHtml = '';
             for (let i = 0; i < POEM_DATABASE.length; i++) {
-                // Ensure we don't run out of star coordinates
                 let p1 = starCoords[i % starCoords.length]; 
                 starsHtml += `<div class="star-node active-star trigger-nav" data-target="poem-page-${i+1}" title="${POEM_DATABASE[i].dateText} - ${POEM_DATABASE[i].title.replace('<br>',' ')}" style="top: ${p1.top}%; left: ${p1.left}%;"></div>`;
                 if (i < POEM_DATABASE.length - 1) { 
@@ -355,7 +352,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         renderLedger();
 
-        // Ensure we only bind this ONCE on the body, not repeatedly
         if(!window.ledgerBound) {
             document.body.addEventListener('click', (e) => {
                 if(e.target.classList.contains('ledger-submit')) {
@@ -418,20 +414,23 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // 🟢 FIX: Date ab turant update hogi, 1 minute wait nahi karegi
     function initClockAndAtmosphere() {
-        setInterval(() => {
-            const dateSpan = document.getElementById('journal-date');
-            if(dateSpan) {
-                const now = new Date();
-                dateSpan.innerText = `Journal Entry: ${now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`;
-            }
-        }, 60000);
+        const dateSpan = document.getElementById('journal-date');
+        if(!dateSpan) return;
+        
+        const updateDate = () => {
+            const now = new Date();
+            dateSpan.innerText = `Journal Entry: ${now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`;
+        };
+        
+        updateDate(); // Turant load karo
+        setInterval(updateDate, 60000); // Phir har minute update karo
     }
 
     function initCosmicNavigation() {
         document.body.addEventListener('click', (e) => {
             
-            // --- SEAL BREAK LOGIC ---
             const sealWrapper = e.target.closest('.seal-clickable');
             if (sealWrapper && !sealWrapper.classList.contains('broken')) {
                 sealWrapper.classList.add('broken');
@@ -451,7 +450,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 return; 
             }
 
-            // --- NAVIGATION & RESUMING ANIMATION ---
             if(e.target.classList.contains('trigger-nav')) {
                 if(audioPageTurn) {
                     audioPageTurn.currentTime = 0;
