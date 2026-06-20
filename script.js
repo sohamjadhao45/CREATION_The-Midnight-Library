@@ -489,10 +489,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    function initCosmicNavigation() {
+        function initCosmicNavigation() {
         document.body.addEventListener('click', (e) => {
             
-            // 🟢 MEMORY BUTTON LISTENER
+            // 🟢 1. MEMORY BUTTON LISTENER (Screenshot Feature)
             if(e.target.classList.contains('download-poem-btn')) {
                 const targetId = e.target.getAttribute('data-target');
                 const targetCard = document.getElementById(targetId);
@@ -510,6 +510,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
+            // 🟢 2. WAX SEAL BREAK LOGIC
             const sealWrapper = e.target.closest('.seal-clickable');
             if (sealWrapper && !sealWrapper.classList.contains('broken')) {
                 sealWrapper.classList.add('broken');
@@ -529,12 +530,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 return; 
             }
 
-            if(e.target.classList.contains('trigger-nav')) {
+            // 🟢 3. BOOKSHELF & PAGE NAVIGATION FIX (Text ya book dono pe click chalega)
+            const navTrigger = e.target.closest('.trigger-nav');
+            if(navTrigger) {
                 if(audioPageTurn) {
                     audioPageTurn.currentTime = 0;
                     audioPageTurn.play().catch(()=>{});
                 }
-                const target = e.target.getAttribute('data-target');
+                const target = navTrigger.getAttribute('data-target');
                 document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
                 
                 const newPage = document.getElementById(target);
@@ -558,17 +561,31 @@ document.addEventListener("DOMContentLoaded", () => {
                     globalState.notesVisitCount++;
                     checkUltimateVault();
                 }
+                return; // Navigation hone ke baad code yahan ruk jayega
             }
             
-            if(e.target.classList.contains('resonate-btn')) showToast(`❤️ "${e.target.getAttribute('data-poem')}" added to your saved echoes.`);
-            if(e.target.classList.contains('bookmark-btn')) showToast(`🔖 Bookmark placed.`);
+            // 🟢 4. POEM BOTTOM BUTTONS (Resonate, Bookmark, Share)
+            if(e.target.classList.contains('resonate-btn')) {
+                showToast(`❤️ "${e.target.getAttribute('data-poem')}" added to your saved echoes.`);
+            }
+            if(e.target.classList.contains('bookmark-btn')) {
+                showToast(`🔖 Bookmark placed.`);
+            }
             if(e.target.classList.contains('share-poem-btn')) {
                 const title = e.target.getAttribute('data-poem-title');
-                if (navigator.share) navigator.share({ title: title, url: window.location.href });
-                else { navigator.clipboard.writeText(window.location.href); showToast("🔗 Link copied to clipboard!"); }
+                if (navigator.share) {
+                    navigator.share({ title: title, url: window.location.href });
+                } else { 
+                    navigator.clipboard.writeText(window.location.href); 
+                    showToast("🔗 Link copied to clipboard!"); 
+                }
             }
+            
         });
     }
+
+                
+                
 
     function initTypewriterEngine(el) {
         if (!twStates.has(el)) {
