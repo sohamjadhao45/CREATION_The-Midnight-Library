@@ -21,10 +21,41 @@ document.addEventListener("DOMContentLoaded", () => {
             chapterLabel: "CHAPTER II", spineLabel: "SPORTSMAN - CH.II", title: "SPORTSMAN<br>SPIRIT", subtitle: "THE SPIRIT OF EXCELLENCE", themeTag: "⚡ Motivation", dateText: "Written on 14 March 2026", signature: "— Soham Jadhao",
             text: `Ignite your fire.\nLearn from every downfall,\nBouncers will come and go,\nDon't fear the pavilion's call.\n\nNever get upset,\nFace every yorker,\nBuild your own present,\nYour ace will be your marker.\n\nSometimes a hundred,\nSometimes a duck,\nGive your best always,\nAnd leave the rest to luck.\n\nThe past is your best teacher,\nThe future, an unseen creature,\nSpread your wings in the present sky,\nEvery great score begins with a try.`,
             whispers: [ { word: "duck", hidden: "lesson" } ]
-        }
+        },
+       {
+            chapterLabel: "CHAPTER III", // Chapter ka number (Page ke upar dikhega)
+            spineLabel: "FRACTAL DREAMS- CH.III", // Bookshelf ki book par jo naam likha aayega
+            title: "FRACTAL<br>DREAMS", // Main Heading (Agar 2 line me chahiye toh beech me <br> laga dena)
+            subtitle: "WHERE MATHS MEET CREATIVITY", // Title ke theek niche choti line
+            themeTag: "✨ Puzzles & Discovery", // Meta strip me jo tag dikhega
+            dateText: "Written on 18 June 2026", // Antique date text
+            signature: "— Soham Jadhao", // Tera signature
+            text:`The world of signs,\n
+The verse of puzzles.\n
+Relies on infinite shapes,\n
+That's why geometry hustles.\n\n
+Someone's stress reliever,\n
+Someone's tensed summon.\n
+Infinite wonders in every pixel,\n
+One who never starts is already undone.\n\n
+The battle is between mindset,\n
+And a little about equations.\n
+The one who never gives up,\n
+Becomes the master of all summations.\n\n
+Shapes from the dispenser,\n
+Innovation within a single line.\n
+Though the theory stays unknown,\n
+Creativity makes one shine.`,
+            
+            // 🤫 (Optional) Whispering Words: Agar kisi word me magic effect dalna hai
+            whispers: [ 
+                { word: "equations", hidden: "creativity" }, 
+                { word: "unknown", hidden: "mystery" } 
+            ]
+       }
     ];
 
-    const UPCOMING_CHAPTER = { chapterNum: "III", title: "THE COSMOS WITHIN" };
+    const UPCOMING_CHAPTER = { chapterNum: "IV", title: "THE COSMOS WITHIN" };
 
     const globalState = { activeTheme: "dark", isAudioPlaying: false, vortexActive: false, secretClicks: 0, notesVisitCount: 0, secretPassword: "", hasTappedMoon: false, hasTypedWord: false, rainActive: false, visitorName: "Wanderer", elevenElevenTriggered: false, zenModeActive: false };
 
