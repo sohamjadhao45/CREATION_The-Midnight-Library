@@ -33,6 +33,8 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!response.ok) throw new Error("Network response was not ok");
             POEM_DATABASE = await response.json(); 
             buildLibrarySystem(); 
+                       initLibraryFilters(); // 🟢 Naya search filter chalu kiya
+           
             initLedger(); 
         } catch (error) {
             console.error("Error loading the Midnight Library Archives:", error);
@@ -731,5 +733,46 @@ document.addEventListener("DOMContentLoaded", () => {
                 else alert("Please write something before sending.");
             });
         }
+    }
+
+    // 🟢 SEARCH & MOOD FILTER ENGINE
+    function initLibraryFilters() {
+        const searchInput = document.getElementById('library-search');
+        const moodBtns = document.querySelectorAll('.mood-btn');
+        
+        function filterLibrary() {
+            const searchTerm = searchInput ? searchInput.value.toLowerCase() : "";
+            const activeMoodBtn = document.querySelector('.mood-btn.active-mood');
+            const activeMood = activeMoodBtn ? activeMoodBtn.getAttribute('data-mood') : "all";
+            
+            const spines = document.querySelectorAll('#dynamic-bookshelf .book-spine:not(.spine-locked)');
+            
+            spines.forEach((spine, index) => {
+                const poemData = POEM_DATABASE[index];
+                if(!poemData) return;
+                
+                // Title ya Text mein dhundhega
+                const matchesSearch = poemData.title.toLowerCase().includes(searchTerm) || 
+                                      poemData.text.toLowerCase().includes(searchTerm);
+                // Tag mein match karega
+                const matchesMood = activeMood === "all" || poemData.themeTag.includes(activeMood);
+                
+                if(matchesSearch && matchesMood) {
+                    spine.style.display = "flex"; // Dikhao
+                } else {
+                    spine.style.display = "none"; // Chhupao
+                }
+            });
+        }
+
+        if(searchInput) searchInput.addEventListener('input', filterLibrary);
+
+        moodBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                moodBtns.forEach(b => b.classList.remove('active-mood'));
+                e.target.classList.add('active-mood');
+                filterLibrary();
+            });
+        });
     }
 });
