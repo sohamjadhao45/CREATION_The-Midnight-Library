@@ -7,7 +7,26 @@ const twStates = new WeakMap();
 
 document.addEventListener("DOMContentLoaded", () => {
     "use strict";
+    // 🟢 PWA SERVICE WORKER REGISTRATION (Offline Mode)
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('Service Worker Active: True Offline Mode ON ✈️'))
+                .catch(err => console.error('Service Worker Failed:', err));
+        });
+    }
 
+    // 🟢 PUSH NOTIFICATION PERMISSION ALARM
+    function askNotificationPermission() {
+        if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    console.log("Notifications Granted! 🌌");
+                }
+            });
+        }
+    }
+   
     let POEM_DATABASE = []; 
     const UPCOMING_CHAPTER = { chapterNum: "IV", title: "THE UNSEEN REALM" };
 
