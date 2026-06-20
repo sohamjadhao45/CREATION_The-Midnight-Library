@@ -610,7 +610,7 @@ document.addEventListener("DOMContentLoaded", () => {
         state.status = "typing"; 
         el.classList.add("is-typing"); 
 
-        function typeWriter() {
+                function typeWriter() {
             if (!el.closest('.page').classList.contains("active")) { 
                 state.status = "paused"; 
                 el.classList.remove("is-typing"); 
@@ -644,13 +644,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     setTimeout(typeWriter, 400); 
                 }
             } else { 
+                // 🟢 YAHAN HAI TERA SIGNATURE ANIMATION WALA FIX
                 state.status = "finished"; 
                 el.classList.remove("is-typing"); 
-                if(signEl) { signEl.style.width = "100%"; signEl.style.borderColor = "transparent"; signEl.classList.add("show-instantly"); }
+                if(signEl) { 
+                    signEl.classList.add("active-sign"); 
+                }
             }
-        }
-        typeWriter();
-    }
+                }
+       
 
     let drops = [];
     function startRainVisuals() {
