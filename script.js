@@ -26,13 +26,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const audioRain = document.getElementById("audio-rain");
     const audioAmbient = document.getElementById("audio-ambient");
 
+    // 🟢 DATA FETCHING
     async function loadLibraryData() {
         try {
             const response = await fetch('poems.json'); 
             if (!response.ok) throw new Error("Network response was not ok");
-            
             POEM_DATABASE = await response.json(); 
-            
             buildLibrarySystem(); 
             initLedger(); 
         } catch (error) {
@@ -42,12 +41,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // Initialize core non-dynamic features
     initTimeGreeting();
     initClockAndAtmosphere(); 
     initUltimateUniverseBackground(); 
     initCosmicNavigation(); 
+    initDirectHeaderButtons(); // 🟢 NAYA FUNCTION ADD KIYA
     initScrollProgressBar(); 
-    initSecretKeyboardVault(); 
     initDynamicShadows(); 
     initTimeCapsule(); 
     initPassport(); 
@@ -151,6 +151,73 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
     }
+
+    // 🟢 NAYA FUNCTION: Mobile Par 100% chalne ke liye direct listeners
+    function initDirectHeaderButtons() {
+        // Moon Phase - Vault Trigger (3 clicks)
+        document.getElementById('moon-phase')?.addEventListener('click', () => {
+            globalState.secretClicks++;
+            if (globalState.secretClicks === 1) showToast("🌙 Moon tapped 1/3...");
+            if (globalState.secretClicks === 2) showToast("🌙 Moon tapped 2/3...");
+            if (globalState.secretClicks >= 3) {
+                globalState.hasTappedMoon = true;
+                showToast("👁️ The Vault Opens...");
+                const trigger = document.getElementById('secret-vault-trigger');
+                if(trigger) trigger.click(); // Yahan Vault open ho jayega
+                checkUltimateVault();
+            }
+        });
+
+        // Drawers (Favorites & Archives)
+        document.getElementById('open-fav-btn')?.addEventListener('click', () => {
+            document.getElementById('favourites-drawer')?.classList.add('open');
+        });
+        document.getElementById('close-fav-drawer')?.addEventListener('click', () => {
+            document.getElementById('favourites-drawer')?.classList.remove('open');
+        });
+
+        document.getElementById('open-bookmarks-btn')?.addEventListener('click', () => {
+            document.getElementById('bookmarks-drawer')?.classList.add('open');
+        });
+        document.getElementById('close-drawer')?.addEventListener('click', () => {
+            document.getElementById('bookmarks-drawer')?.classList.remove('open');
+        });
+
+        // Focus Mode
+        document.getElementById('reading-mode-toggle')?.addEventListener('click', () => {
+            document.body.classList.toggle('reading-mode');
+            const exitBtn = document.getElementById('exit-focus-btn');
+            if(document.body.classList.contains('reading-mode')) {
+                if(exitBtn) exitBtn.style.display = 'block';
+                showToast("📖 Focus Mode activated.");
+            } else {
+                if(exitBtn) exitBtn.style.display = 'none';
+                showToast("📖 Focus Mode disabled.");
+            }
+        });
+        document.getElementById('exit-focus-btn')?.addEventListener('click', () => {
+            document.body.classList.remove('reading-mode');
+            document.getElementById('exit-focus-btn').style.display = 'none';
+        });
+
+        // Theme Toggle
+        document.getElementById('theme-toggle')?.addEventListener('click', (e) => {
+            const html = document.documentElement;
+            if(globalState.activeTheme === "dark") { 
+                html.setAttribute('data-theme', 'light'); 
+                globalState.activeTheme = "light"; 
+                e.target.innerText = "☀️ Day"; 
+            } else { 
+                html.setAttribute('data-theme', 'dark'); 
+                globalState.activeTheme = "dark"; 
+                e.target.innerText = "🌙 Night"; 
+            }
+        });
+
+        // Rain Toggle
+        document.getElementById('rain-toggle')?.addEventListener('click', toggleRain);
+    }
+
 
     function buildLibrarySystem() {
         const nav = document.getElementById("library-nav"); 
@@ -306,6 +373,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // Ab secret keyboard vault PC ke liye on rahega, par mobile walon ke liye tap wala bhi ban gaya hai
     function initSecretKeyboardVault() {
         const randomIndex = Math.floor(Math.random() * moonWords.length);
         globalState.secretPassword = moonWords[randomIndex];
@@ -476,65 +544,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
             
-            // 🟢 FAVORITES DRAWER OPEN FIX
-            if(e.target.id === 'open-fav-btn' || e.target.closest('#open-fav-btn')) {
-                const d = document.getElementById('favourites-drawer');
-                if(d) d.classList.add('open');
-                return;
-            }
-
-            // 🟢 ARCHIVES/BOOKMARKS DRAWER OPEN FIX
-            if(e.target.id === 'open-bookmarks-btn' || e.target.closest('#open-bookmarks-btn')) {
-                const d = document.getElementById('bookmarks-drawer');
-                if(d) d.classList.add('open');
-                return;
-            }
-
-            // 🟢 DRAWERS CLOSE FIX
-            if(e.target.id === 'close-drawer' || e.target.id === 'close-fav-drawer') {
-                document.querySelectorAll('.drawer').forEach(d => d.classList.remove('open'));
-                return;
-            }
-
-            // 🟢 FOCUS MODE TOGGLE FIX
-            if(e.target.id === 'reading-mode-toggle' || e.target.closest('#reading-mode-toggle')) {
-                document.body.classList.toggle('reading-mode'); // CSS .reading-mode property classes activated
-                const exitBtn = document.getElementById('exit-focus-btn');
-                if(document.body.classList.contains('reading-mode')) {
-                    if(exitBtn) exitBtn.style.display = 'block';
-                    showToast("📖 Focus Mode activated.");
-                } else {
-                    if(exitBtn) exitBtn.style.display = 'none';
-                }
-                return;
-            }
-            if(e.target.id === 'exit-focus-btn') {
-                document.body.classList.remove('reading-mode');
-                e.target.style.display = 'none';
-                return;
-            }
-
             if(e.target.classList.contains('resonate-btn')) showToast(`❤️ "${e.target.getAttribute('data-poem')}" added to your saved echoes.`);
             if(e.target.classList.contains('bookmark-btn')) showToast(`🔖 Bookmark placed.`);
             if(e.target.classList.contains('share-poem-btn')) {
                 const title = e.target.getAttribute('data-poem-title');
                 if (navigator.share) navigator.share({ title: title, url: window.location.href });
                 else { navigator.clipboard.writeText(window.location.href); showToast("🔗 Link copied to clipboard!"); }
-            }
-
-            if(e.target.id === 'rain-toggle') toggleRain();
-            if(e.target.id === 'moon-phase') {
-                globalState.secretClicks++;
-                if(globalState.secretClicks >= 3 && !globalState.hasTappedMoon) {
-                    globalState.hasTappedMoon = true;
-                    showToast("🌙 The moon acknowledges your presence.");
-                    checkUltimateVault();
-                }
-            }
-            if(e.target.id === 'theme-toggle') {
-                const html = document.documentElement;
-                if(globalState.activeTheme === "dark") { html.setAttribute('data-theme', 'light'); globalState.activeTheme = "light"; e.target.innerText = "☀️ Day"; }
-                else { html.setAttribute('data-theme', 'dark'); globalState.activeTheme = "dark"; e.target.innerText = "🌙 Night"; }
             }
         });
     }
