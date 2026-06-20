@@ -735,10 +735,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // 🟢 SEARCH & MOOD FILTER ENGINE
+        // 🟢 SMART SEARCH & MOOD FILTER ENGINE
     function initLibraryFilters() {
         const searchInput = document.getElementById('library-search');
         const moodBtns = document.querySelectorAll('.mood-btn');
+        const noResultsMsg = document.getElementById('no-results-msg');
         
         function filterLibrary() {
             const searchTerm = searchInput ? searchInput.value.toLowerCase() : "";
@@ -746,23 +747,45 @@ document.addEventListener("DOMContentLoaded", () => {
             const activeMood = activeMoodBtn ? activeMoodBtn.getAttribute('data-mood') : "all";
             
             const spines = document.querySelectorAll('#dynamic-bookshelf .book-spine:not(.spine-locked)');
+            const lockedSpine = document.querySelector('.spine-locked'); // Locked book
+            
+            let visibleCount = 0; // Ginta hai kitni books mili
             
             spines.forEach((spine, index) => {
                 const poemData = POEM_DATABASE[index];
                 if(!poemData) return;
                 
-                // Title ya Text mein dhundhega
+                // 🟢 FIX: Ab Title, Text ke sath Subtitle aur Tags mein bhi search karega!
                 const matchesSearch = poemData.title.toLowerCase().includes(searchTerm) || 
-                                      poemData.text.toLowerCase().includes(searchTerm);
-                // Tag mein match karega
+                                      poemData.text.toLowerCase().includes(searchTerm) ||
+                                      poemData.subtitle.toLowerCase().includes(searchTerm) ||
+                                      poemData.themeTag.toLowerCase().includes(searchTerm);
+                                      
                 const matchesMood = activeMood === "all" || poemData.themeTag.includes(activeMood);
                 
                 if(matchesSearch && matchesMood) {
                     spine.style.display = "flex"; // Dikhao
+                    visibleCount++;
                 } else {
                     spine.style.display = "none"; // Chhupao
                 }
             });
+
+            // 🟢 HIDE LOCKED BOOK DURING SEARCH
+            if(lockedSpine) {
+                if(searchTerm !== "" || activeMood !== "all") {
+                    lockedSpine.style.display = "none"; // Filter karne par black book hata do
+                } else {
+                    lockedSpine.style.display = "flex"; // Wapas lao jab sab clear ho
+                }
+            }
+
+            // 🟢 SHOW "NO RESULTS" MESSAGE
+            if(visibleCount === 0 && noResultsMsg) {
+                noResultsMsg.style.display = "block"; // Agar ek bhi nahi mili toh message dikhao
+            } else if(noResultsMsg) {
+                noResultsMsg.style.display = "none";
+            }
         }
 
         if(searchInput) searchInput.addEventListener('input', filterLibrary);
@@ -774,5 +797,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 filterLibrary();
             });
         });
-    }
+}
+   
 });
