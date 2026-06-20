@@ -26,7 +26,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const audioRain = document.getElementById("audio-rain");
     const audioAmbient = document.getElementById("audio-ambient");
 
-    // 🟢 FETCH FUNCTION
     async function loadLibraryData() {
         try {
             const response = await fetch('poems.json'); 
@@ -113,7 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function initTouchRipple() {
         document.body.addEventListener('click', (e) => {
-            if(e.target.tagName === 'BUTTON' || e.target.tagName === 'A') return;
+            if(e.target.tagName === 'BUTTON' || e.target.tagName === 'A' || e.target.closest('.btn-icon') || e.target.closest('.nav-link')) return;
             const ripple = document.createElement('div');
             ripple.className = 'touch-ripple';
             ripple.style.left = e.clientX + 'px';
@@ -162,7 +161,6 @@ document.addEventListener("DOMContentLoaded", () => {
         
         if(!nav || !bookshelf || !secretPage) return;
 
-        // 🟢 FIX: Added 'trigger-nav' class so the bottom strip works!
         nav.innerHTML = `<button class="nav-link active-nav trigger-nav" data-target="page1">Library Entrance</button>`; 
         bookshelf.innerHTML = ""; 
         let prevPageId = "page1";
@@ -171,7 +169,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const pageId = `poem-page-${i + 1}`; 
             const nextPageId = i < POEM_DATABASE.length - 1 ? `poem-page-${i + 2}` : `page-fragments`;
             
-            // 🟢 FIX: Added 'trigger-nav' here too
             nav.innerHTML += `<button class="nav-link trigger-nav" data-target="${pageId}">${poem.chapterLabel}</button>`;
             
             const cleanTitle = poem.title.replace('<br>', ' '); 
@@ -223,7 +220,6 @@ document.addEventListener("DOMContentLoaded", () => {
             prevPageId = pageId;
         });
 
-        // 🟢 FIX: Added 'trigger-nav' to remaining strip buttons
         nav.innerHTML += `<button class="nav-link trigger-nav" data-target="page-fragments">Notes Room</button><button class="nav-link trigger-nav" data-target="page-archive">Ancient Shelf</button><button class="nav-link trigger-nav" data-target="page-about">Author's Chamber</button>`;
         
         const btnExplore = document.getElementById("btn-explore");
@@ -414,7 +410,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // 🟢 FIX: Date ab turant update hogi, 1 minute wait nahi karegi
     function initClockAndAtmosphere() {
         const dateSpan = document.getElementById('journal-date');
         if(!dateSpan) return;
@@ -424,8 +419,8 @@ document.addEventListener("DOMContentLoaded", () => {
             dateSpan.innerText = `Journal Entry: ${now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`;
         };
         
-        updateDate(); // Turant load karo
-        setInterval(updateDate, 60000); // Phir har minute update karo
+        updateDate(); 
+        setInterval(updateDate, 60000); 
     }
 
     function initCosmicNavigation() {
@@ -481,6 +476,44 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
             
+            // 🟢 FAVORITES DRAWER OPEN FIX
+            if(e.target.id === 'open-fav-btn' || e.target.closest('#open-fav-btn')) {
+                const d = document.getElementById('favourites-drawer');
+                if(d) d.classList.add('open');
+                return;
+            }
+
+            // 🟢 ARCHIVES/BOOKMARKS DRAWER OPEN FIX
+            if(e.target.id === 'open-bookmarks-btn' || e.target.closest('#open-bookmarks-btn')) {
+                const d = document.getElementById('bookmarks-drawer');
+                if(d) d.classList.add('open');
+                return;
+            }
+
+            // 🟢 DRAWERS CLOSE FIX
+            if(e.target.id === 'close-drawer' || e.target.id === 'close-fav-drawer') {
+                document.querySelectorAll('.drawer').forEach(d => d.classList.remove('open'));
+                return;
+            }
+
+            // 🟢 FOCUS MODE TOGGLE FIX
+            if(e.target.id === 'reading-mode-toggle' || e.target.closest('#reading-mode-toggle')) {
+                document.body.classList.toggle('reading-mode'); // CSS .reading-mode property classes activated
+                const exitBtn = document.getElementById('exit-focus-btn');
+                if(document.body.classList.contains('reading-mode')) {
+                    if(exitBtn) exitBtn.style.display = 'block';
+                    showToast("📖 Focus Mode activated.");
+                } else {
+                    if(exitBtn) exitBtn.style.display = 'none';
+                }
+                return;
+            }
+            if(e.target.id === 'exit-focus-btn') {
+                document.body.classList.remove('reading-mode');
+                e.target.style.display = 'none';
+                return;
+            }
+
             if(e.target.classList.contains('resonate-btn')) showToast(`❤️ "${e.target.getAttribute('data-poem')}" added to your saved echoes.`);
             if(e.target.classList.contains('bookmark-btn')) showToast(`🔖 Bookmark placed.`);
             if(e.target.classList.contains('share-poem-btn')) {
@@ -498,20 +531,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     checkUltimateVault();
                 }
             }
-            if(e.target.id === 'close-drawer' || e.target.id === 'close-fav-drawer') document.querySelectorAll('.drawer').forEach(d => d.style.right = '-350px');
-            if(e.target.id === 'open-bookmarks-btn') { const d = document.getElementById('bookmarks-drawer'); if(d) d.style.right = '0'; }
-            if(e.target.id === 'open-fav-btn') { const d = document.getElementById('favourites-drawer'); if(d) d.style.right = '0'; }
             if(e.target.id === 'theme-toggle') {
                 const html = document.documentElement;
                 if(globalState.activeTheme === "dark") { html.setAttribute('data-theme', 'light'); globalState.activeTheme = "light"; e.target.innerText = "☀️ Day"; }
                 else { html.setAttribute('data-theme', 'dark'); globalState.activeTheme = "dark"; e.target.innerText = "🌙 Night"; }
             }
-            if(e.target.id === 'reading-mode-toggle') {
-                document.body.classList.toggle('focus-mode');
-                const exitBtn = document.getElementById('exit-focus-btn');
-                if(document.body.classList.contains('focus-mode')) { if(exitBtn) exitBtn.style.display = 'block'; showToast("📖 Focus Mode activated."); }
-            }
-            if(e.target.id === 'exit-focus-btn') { document.body.classList.remove('focus-mode'); e.target.style.display = 'none'; }
         });
     }
 
