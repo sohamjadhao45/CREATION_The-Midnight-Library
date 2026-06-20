@@ -242,3 +242,23 @@ button:not(.nav-link):hover { transform: translateY(-2px); box-shadow: 0 6px 20p
   margin-top: 20px;
   border-radius: 5px;
 }
+/* =========================================
+   🔍 SEARCH & MOOD FILTERS
+   ========================================= */
+.mood-btn {
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    padding: 6px 15px;
+    border-radius: 20px;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: 'Cinzel', serif;
+    transition: all 0.3s ease;
+}
+.mood-btn.active-mood, .mood-btn:hover {
+    background: var(--gold);
+    color: var(--bg-color);
+    box-shadow: 0 0 10px rgba(191,164,111,0.4);
+}
+
