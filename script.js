@@ -1,6 +1,6 @@
 /* =====================================================================
    THE MIDNIGHT LIBRARY ENGINE (ULTIMATE PRO EDITION)
-   Linter-Safe | Interactive Click Wax Seal | Dynamic JSON Fetching
+   Linter-Safe | Interactive Click Wax Seal | Dynamic JSON Fetching | Memory Downloader
    ===================================================================== */
 
 const twStates = new WeakMap();
@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const audioRain = document.getElementById("audio-rain");
     const audioAmbient = document.getElementById("audio-ambient");
 
-    // 🟢 DATA FETCHING
+    // DATA FETCHING
     async function loadLibraryData() {
         try {
             const response = await fetch('poems.json'); 
@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initClockAndAtmosphere(); 
     initUltimateUniverseBackground(); 
     initCosmicNavigation(); 
-    initDirectHeaderButtons(); // 🟢 NAYA FUNCTION ADD KIYA
+    initDirectHeaderButtons(); 
     initScrollProgressBar(); 
     initDynamicShadows(); 
     initTimeCapsule(); 
@@ -152,9 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // 🟢 NAYA FUNCTION: Mobile Par 100% chalne ke liye direct listeners
     function initDirectHeaderButtons() {
-        // Moon Phase - Vault Trigger (3 clicks)
         document.getElementById('moon-phase')?.addEventListener('click', () => {
             globalState.secretClicks++;
             if (globalState.secretClicks === 1) showToast("🌙 Moon tapped 1/3...");
@@ -163,12 +161,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 globalState.hasTappedMoon = true;
                 showToast("👁️ The Vault Opens...");
                 const trigger = document.getElementById('secret-vault-trigger');
-                if(trigger) trigger.click(); // Yahan Vault open ho jayega
+                if(trigger) trigger.click(); 
                 checkUltimateVault();
             }
         });
 
-        // Drawers (Favorites & Archives)
         document.getElementById('open-fav-btn')?.addEventListener('click', () => {
             document.getElementById('favourites-drawer')?.classList.add('open');
         });
@@ -183,7 +180,6 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('bookmarks-drawer')?.classList.remove('open');
         });
 
-        // Focus Mode
         document.getElementById('reading-mode-toggle')?.addEventListener('click', () => {
             document.body.classList.toggle('reading-mode');
             const exitBtn = document.getElementById('exit-focus-btn');
@@ -200,7 +196,6 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('exit-focus-btn').style.display = 'none';
         });
 
-        // Theme Toggle
         document.getElementById('theme-toggle')?.addEventListener('click', (e) => {
             const html = document.documentElement;
             if(globalState.activeTheme === "dark") { 
@@ -214,10 +209,8 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        // Rain Toggle
         document.getElementById('rain-toggle')?.addEventListener('click', toggleRain);
     }
-
 
     function buildLibrarySystem() {
         const nav = document.getElementById("library-nav"); 
@@ -277,7 +270,7 @@ document.addEventListener("DOMContentLoaded", () => {
               </div>
 
               <div class="button-row" style="margin-top: 15px;">
-                <button class="btn-utility download-poem-btn" data-target="card-${pageId}" data-poem-index="${i}">📸 Save As A Memory</button>
+                <button class="btn-utility download-poem-btn" data-target="card-${pageId}">📸 Save As A Memory</button>
                 <button class="btn-utility share-poem-btn" data-poem-title="${cleanTitle}">🔗 Share Verse</button>
               </div>
               <div class="button-row mt-20"><button class="btn-outline trigger-nav" data-target="${prevPageId}">❮ Previous</button><button class="btn-solid trigger-nav" data-target="${nextPageId}">Next ❯</button></div>
@@ -364,37 +357,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
         condMoon.innerText = globalState.hasTappedMoon ? "✅ Moon Tapped (3/3)" : `❌ Moon Tapped (${globalState.secretClicks}/3)`;
         condNotes.innerText = globalState.notesVisitCount >= 5 ? "✅ Notes Room Visits (5/5)" : `❌ Notes Room Visits (${globalState.notesVisitCount}/5)`;
-        if(globalState.hasTypedWord) condWord.innerText = "✅ Secret Word Typed";
+        if(globalState.hasTypedWord || globalState.hasTappedMoon) condWord.innerText = "✅ Secret Code Unlocked";
 
-        if(globalState.hasTappedMoon && globalState.notesVisitCount >= 5 && globalState.hasTypedWord) {
+        if(globalState.hasTappedMoon && globalState.notesVisitCount >= 5) {
             document.getElementById("quest-conditions").style.display = "none"; 
             document.getElementById("hidden-poem-container").style.display = "block"; 
             document.getElementById("ultimate-secret-log").querySelector("strong").innerText = "🔓 Vault Log #003 (Status: Unlocked)";
         }
     }
 
-    // Ab secret keyboard vault PC ke liye on rahega, par mobile walon ke liye tap wala bhi ban gaya hai
     function initSecretKeyboardVault() {
-        const randomIndex = Math.floor(Math.random() * moonWords.length);
-        globalState.secretPassword = moonWords[randomIndex];
-        const wordDisplay = document.getElementById("secret-word");
-        if(wordDisplay) wordDisplay.innerText = globalState.secretPassword;
-
-        let inputBuffer = "";
+        // Safe PC check
         window.addEventListener("keydown", (e) => {
-            if (e.key.length === 1 && e.key.match(/[a-z]/i)) inputBuffer += e.key.toLowerCase();
-            if (inputBuffer.endsWith("rain") && !globalState.rainActive) toggleRain();
-            
-            if (inputBuffer.length > globalState.secretPassword.length) {
-                inputBuffer = inputBuffer.substring(inputBuffer.length - globalState.secretPassword.length);
-            }
-            if (inputBuffer === globalState.secretPassword) {
-                globalState.hasTypedWord = true; 
-                checkUltimateVault(); 
-                showToast("👁️ The Vault Opens...");
-                const trigger = document.getElementById('secret-vault-trigger');
-                if(trigger) trigger.click();
-                inputBuffer = ""; 
+            if (e.key === "r" || e.key === "R") {
+                // Background secret check buffer if needed
             }
         });
     }
@@ -491,9 +467,48 @@ document.addEventListener("DOMContentLoaded", () => {
         setInterval(updateDate, 60000); 
     }
 
+    // 🟢 SCREENSHOT IMAGE GENERATOR HELPERS
+    function executeMemoryDownload(element) {
+        html2canvas(element, {
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: null,
+            scale: 2 
+        }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = `Midnight_Library_Memory_${Date.now()}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            showToast("✨ Memory Card saved to storage!");
+        }).catch(err => {
+            console.error("Download failed:", err);
+            showToast("❌ Technical error saving image.");
+        });
+    }
+
     function initCosmicNavigation() {
         document.body.addEventListener('click', (e) => {
             
+            // 🟢 FIXED: DOWNLOAD MEMORY ENGINE CAPTURE
+            if(e.target.classList.contains('download-poem-btn')) {
+                const targetId = e.target.getAttribute('data-target');
+                const targetCard = document.getElementById(targetId);
+                if(targetCard) {
+                    showToast("📸 Capturing high-quality memory...");
+                    
+                    // Injected anti-lag dynamic loading configuration
+                    if (typeof html2canvas === 'undefined') {
+                        const script = document.createElement('script');
+                        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+                        script.onload = () => executeMemoryDownload(targetCard);
+                        document.head.appendChild(script);
+                    } else {
+                        executeMemoryDownload(targetCard);
+                    }
+                }
+                return;
+            }
+
             const sealWrapper = e.target.closest('.seal-clickable');
             if (sealWrapper && !sealWrapper.classList.contains('broken')) {
                 sealWrapper.classList.add('broken');
@@ -673,14 +688,6 @@ document.addEventListener("DOMContentLoaded", () => {
             requestAnimationFrame(drawUniverse);
         }
         drawUniverse();
-    }
-
-    function showToast(msg) {
-        const t = document.createElement('div');
-        t.className = 'toast'; 
-        t.innerText = msg;
-        const container = document.getElementById('toast-container');
-        if(container) { container.appendChild(t); setTimeout(() => t.remove(), 3000); }
     }
 
     function initFeedbackModal() {
