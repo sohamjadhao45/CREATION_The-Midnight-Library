@@ -262,3 +262,25 @@ button:not(.nav-link):hover { transform: translateY(-2px); box-shadow: 0 6px 20p
     box-shadow: 0 0 10px rgba(191,164,111,0.4);
 }
 
+/* 🔍 PREMIUM SEARCH BAR */
+.premium-search-input {
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    background: transparent;
+    border: 1px dashed rgba(191,164,111,0.5);
+    color: var(--gold);
+    padding: 10px 15px;
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    border-radius: 5px;
+    outline: none;
+    transition: border 0.3s ease;
+}
+.premium-search-input:focus {
+    border: 1px solid var(--gold);
+    box-shadow: 0 0 10px rgba(191,164,111,0.2);
+}
+.premium-search-input::placeholder {
+    color: rgba(191,164,111,0.5);
+}
