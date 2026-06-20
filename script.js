@@ -468,17 +468,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // 🟢 SCREENSHOT IMAGE GENERATOR HELPERS
-    function executeMemoryDownload(element) {
+        function executeMemoryDownload(element) {
+        if (typeof html2canvas === 'undefined') {
+            showToast("⏳ Loading camera, please click again...");
+            return;
+        }
         html2canvas(element, {
             useCORS: true,
             allowTaint: true,
-            backgroundColor: null,
-            scale: 2 
+            backgroundColor: "#151515", // PWA transparency fix
+            scale: window.devicePixelRatio || 2 
         }).then(canvas => {
             const link = document.createElement('a');
             link.download = `Midnight_Library_Memory_${Date.now()}.png`;
             link.href = canvas.toDataURL('image/png');
+            document.body.appendChild(link); // 🟢 Mobile fix: Append to body
             link.click();
+            document.body.removeChild(link); // Clean up
             showToast("✨ Memory Card saved to storage!");
         }).catch(err => {
             console.error("Download failed:", err);
@@ -486,6 +492,20 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // Aur theek iske niche jahan click event hai (if(e.target.classList.contains('download-poem-btn')))
+    // Usko dhoondh kar itna chota kar de:
+    document.body.addEventListener('click', (e) => {
+        if(e.target.classList.contains('download-poem-btn')) {
+            const targetId = e.target.getAttribute('data-target');
+            const targetCard = document.getElementById(targetId);
+            if(targetCard) {
+                showToast("📸 Capturing high-quality memory...");
+                executeMemoryDownload(targetCard);
+            }
+            return;
+        }
+        // ... (baaki ka seal wala code waise hi rehne de)
+       
     function initCosmicNavigation() {
         document.body.addEventListener('click', (e) => {
             
