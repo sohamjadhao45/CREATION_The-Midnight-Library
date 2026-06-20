@@ -150,11 +150,17 @@ document.addEventListener("DOMContentLoaded", () => {
         if(savedName && input) input.value = savedName;
 
         if(enterBtn) {
-            enterBtn.addEventListener("click", () => {
+                        enterBtn.addEventListener("click", () => {
                 let name = input ? input.value.trim() : "";
                 if(!name) name = "Wanderer";
                 localStorage.setItem("midnightVisitor", name);
                 globalState.visitorName = name;
+                
+                // 🟢 NAYA CODE: Button dabate hi Notification Permission mangega
+                askNotificationPermission(); 
+
+                // ... (Baki code waisa hi rahega)
+                           
                 
                 const greeting = document.getElementById("vault-greeting");
                 if(greeting) greeting.innerHTML = `Ah, <span style="color:var(--gold);">${name}</span>... welcome to the Secret Vault.`;
