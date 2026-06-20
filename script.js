@@ -99,37 +99,58 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    function initTimeGreeting() {
+        // 🟢 SMART WEATHER & TIME GREETING ENGINE
+    const WEATHER_API_KEY = "YAHAN_APNI_OPENWEATHER_API_KEY_PASTE_KARO"; // 👈 Apni Key yahan daalna
+
+    async function initTimeGreeting() {
         const greetingEl = document.getElementById("time-greeting");
         if (!greetingEl) return;
-        const hour = new Date().getHours();
-        let greeting = "Welcome, Wanderer";
-        if (hour >= 5 && hour < 12) greeting = "Good Morning, Wanderer";
-        else if (hour >= 12 && hour < 17) greeting = "Good Afternoon, Wanderer";
-        else if (hour >= 17 && hour < 21) greeting = "Good Evening, Wanderer";
-        else greeting = "The night is quiet, perfect for reading.";
-        greetingEl.innerText = greeting;
-    }
 
-    let zenScrollInterval;
-    function initZenMode() {
-        const zenBtn = document.getElementById("zen-mode-toggle");
-        if (!zenBtn) return;
-        zenBtn.addEventListener("click", () => {
-            globalState.zenModeActive = !globalState.zenModeActive;
-            if (globalState.zenModeActive) {
-                zenBtn.classList.add("active-zen");
-                zenBtn.innerText = "📜 Zen: ON";
-                showToast("Zen Mode Activated. Read slowly...");
-                zenScrollInterval = setInterval(() => window.scrollBy({ top: 1, left: 0, behavior: 'auto' }), 40);
-            } else {
-                zenBtn.classList.remove("active-zen");
-                zenBtn.innerText = "📜 Zen Mode";
-                clearInterval(zenScrollInterval);
-                showToast("Zen Mode Deactivated.");
-            }
-        });
+        const hour = new Date().getHours();
+        let timeGreeting = "Welcome, Wanderer";
+        
+        if (hour >= 5 && hour < 12) timeGreeting = "Good Morning";
+        else if (hour >= 12 && hour < 17) timeGreeting = "Good Afternoon";
+        else if (hour >= 17 && hour < 21) timeGreeting = "Good Evening";
+        else timeGreeting = "The night is quiet";
+
+        // Location aur Weather nikalne ka logic
+        if (navigator.geolocation && WEATHER_API_KEY !== "YAHAN_APNI_OPENWEATHER_API_KEY_PASTE_KARO") {
+            navigator.geolocation.getCurrentPosition(async (position) => {
+                try {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${WEATHER_API_KEY}&units=metric`);
+                    const data = await res.json();
+                    
+                    const weatherCondition = data.weather[0].main.toLowerCase(); // e.g., rain, clouds, clear
+                    const temp = Math.round(data.main.temp);
+                    
+                    let weatherGreeting = `It's a beautiful day`;
+                    if (weatherCondition.includes("rain") || weatherCondition.includes("drizzle")) {
+                        weatherGreeting = `It's raining softly (${temp}°C)`;
+                        // 🌧️ AUTOMATIC RAIN TRIGGER: Agar sach mein baarish hai toh rain mode ON kar do!
+                        if(!globalState.rainActive) toggleRain(); 
+                    } else if (weatherCondition.includes("cloud")) {
+                        weatherGreeting = `The sky is cloudy (${temp}°C)`;
+                    } else if (weatherCondition.includes("clear")) {
+                        weatherGreeting = `The stars are clear (${temp}°C)`;
+                    }
+
+                    greetingEl.innerText = `${timeGreeting}, Wanderer. ${weatherGreeting}, perfect for reading.`;
+                } catch (err) {
+                    console.log("Weather fetch failed, using fallback time greeting.");
+                    greetingEl.innerText = `${timeGreeting === "The night is quiet" ? timeGreeting + ", perfect for reading." : timeGreeting + ", Wanderer."}`;
+                }
+            }, () => {
+                // User ne location block ki toh normal greeting
+                greetingEl.innerText = `${timeGreeting === "The night is quiet" ? timeGreeting + ", perfect for reading." : timeGreeting + ", Wanderer."}`;
+            });
+        } else {
+            greetingEl.innerText = `${timeGreeting === "The night is quiet" ? timeGreeting + ", perfect for reading." : timeGreeting + ", Wanderer."}`;
+        }
     }
+   
 
     function initTouchRipple() {
         document.body.addEventListener('click', (e) => {
