@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Initialize core non-dynamic features
+    // Initialize core features
     initTimeGreeting();
     initClockAndAtmosphere(); 
     initUltimateUniverseBackground(); 
@@ -367,11 +367,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function initSecretKeyboardVault() {
-        // Safe PC check
         window.addEventListener("keydown", (e) => {
-            if (e.key === "r" || e.key === "R") {
-                // Background secret check buffer if needed
-            }
+            // Keep keyboard safe and simple for background inputs if needed
         });
     }
 
@@ -467,8 +464,8 @@ document.addEventListener("DOMContentLoaded", () => {
         setInterval(updateDate, 60000); 
     }
 
-    // 🟢 SCREENSHOT IMAGE GENERATOR HELPERS
-        function executeMemoryDownload(element) {
+    // 🟢 IMAGE DOWNLOADER ENGINE
+    function executeMemoryDownload(element) {
         if (typeof html2canvas === 'undefined') {
             showToast("⏳ Loading camera, please click again...");
             return;
@@ -476,15 +473,15 @@ document.addEventListener("DOMContentLoaded", () => {
         html2canvas(element, {
             useCORS: true,
             allowTaint: true,
-            backgroundColor: "#151515", // PWA transparency fix
+            backgroundColor: "#151515", 
             scale: window.devicePixelRatio || 2 
         }).then(canvas => {
             const link = document.createElement('a');
             link.download = `Midnight_Library_Memory_${Date.now()}.png`;
             link.href = canvas.toDataURL('image/png');
-            document.body.appendChild(link); // 🟢 Mobile fix: Append to body
+            document.body.appendChild(link);
             link.click();
-            document.body.removeChild(link); // Clean up
+            document.body.removeChild(link);
             showToast("✨ Memory Card saved to storage!");
         }).catch(err => {
             console.error("Download failed:", err);
@@ -492,31 +489,15 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Aur theek iske niche jahan click event hai (if(e.target.classList.contains('download-poem-btn')))
-    // Usko dhoondh kar itna chota kar de:
-    document.body.addEventListener('click', (e) => {
-        if(e.target.classList.contains('download-poem-btn')) {
-            const targetId = e.target.getAttribute('data-target');
-            const targetCard = document.getElementById(targetId);
-            if(targetCard) {
-                showToast("📸 Capturing high-quality memory...");
-                executeMemoryDownload(targetCard);
-            }
-            return;
-        }
-        // ... (baaki ka seal wala code waise hi rehne de)
-       
     function initCosmicNavigation() {
         document.body.addEventListener('click', (e) => {
             
-            // 🟢 FIXED: DOWNLOAD MEMORY ENGINE CAPTURE
+            // 🟢 MEMORY BUTTON LISTENER
             if(e.target.classList.contains('download-poem-btn')) {
                 const targetId = e.target.getAttribute('data-target');
                 const targetCard = document.getElementById(targetId);
                 if(targetCard) {
                     showToast("📸 Capturing high-quality memory...");
-                    
-                    // Injected anti-lag dynamic loading configuration
                     if (typeof html2canvas === 'undefined') {
                         const script = document.createElement('script');
                         script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
@@ -602,7 +583,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const signEl = el.closest('.poem-text-container')?.querySelector(".sign-animate");
 
         if (state.status === "finished") { 
-            if(signEl) { signEl.style.width = "100%"; signEl.style.borderColor = "transparent"; signEl.classList.add("show-instantly"); }
+            if(signEl) { signEl.classList.add("active-sign"); }
             return; 
         }
         if (state.status === "typing") return; 
@@ -610,7 +591,7 @@ document.addEventListener("DOMContentLoaded", () => {
         state.status = "typing"; 
         el.classList.add("is-typing"); 
 
-                function typeWriter() {
+        function typeWriter() {
             if (!el.closest('.page').classList.contains("active")) { 
                 state.status = "paused"; 
                 el.classList.remove("is-typing"); 
@@ -644,15 +625,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     setTimeout(typeWriter, 400); 
                 }
             } else { 
-                // 🟢 YAHAN HAI TERA SIGNATURE ANIMATION WALA FIX
                 state.status = "finished"; 
                 el.classList.remove("is-typing"); 
-                if(signEl) { 
-                    signEl.classList.add("active-sign"); 
-                }
+                if(signEl) { signEl.classList.add("active-sign"); } // 🟢 NAYA SIGNATURE ANIMATION FIX YAHAN HAI
             }
-                }
-       
+        }
+        typeWriter();
+    }
 
     let drops = [];
     function startRainVisuals() {
@@ -710,6 +689,14 @@ document.addEventListener("DOMContentLoaded", () => {
             requestAnimationFrame(drawUniverse);
         }
         drawUniverse();
+    }
+
+    function showToast(msg) {
+        const t = document.createElement('div');
+        t.className = 'toast'; 
+        t.innerText = msg;
+        const container = document.getElementById('toast-container');
+        if(container) { container.appendChild(t); setTimeout(() => t.remove(), 3000); }
     }
 
     function initFeedbackModal() {
