@@ -20,17 +20,12 @@ document.addEventListener("DOMContentLoaded", () => {
         {
             chapterLabel: "CHAPTER II", spineLabel: "SPORTSMAN - CH.II", title: "SPORTSMAN<br>SPIRIT", subtitle: "THE SPIRIT OF EXCELLENCE", themeTag: "⚡ Motivation", dateText: "Written on 14 March 2026", signature: "— Soham Jadhao",
             text: `Ignite your fire.\nLearn from every downfall,\nBouncers will come and go,\nDon't fear the pavilion's call.\n\nNever get upset,\nFace every yorker,\nBuild your own present,\nYour ace will be your marker.\n\nSometimes a hundred,\nSometimes a duck,\nGive your best always,\nAnd leave the rest to luck.\n\nThe past is your best teacher,\nThe future, an unseen creature,\nSpread your wings in the present sky,\nEvery great score begins with a try.`,
-            whispers: [ { word: "duck", hidden: "lesson" } , { word: "yorker", hidden: "downfall"]
+            whispers: [ { word: "duck", hidden: "lesson" } , { word: "yorker", hidden: "downfall"} ]
         },
        {
-            chapterLabel: "CHAPTER III", spineLabel: "FRACTAL DREAMS- CH.III", title: "FRACTAL<br>DREAMS", subtitle: "WHERE MATHS MEET CREATIVITY", themeTag: "✨ Puzzles & Discovery", dateText: "Written on 18 June 2026", // Antique date text
-            signature: "— Soham Jadhao", 
-          text:`The world of signs,\nThe verse of puzzles.\nRelies on infinite shapes,\nThat's why geometry hustles.\n\nSomeone's stress reliever,\nSomeone's tensed summon.\nInfinite wonders in every pixel,\nOne who never starts is already undone.\n\nThe battle is between mindset,\nAnd a little about equations.\nThe one who never gives up,\nBecomes the master of all summations.\n\nShapes from the dispenser,\nInnovation within a single line.\nThough the theory stays unknown,\nCreativity makes one shine.`,
-            
-            // 🤫 (Optional) Whispering Words: Agar kisi word me magic effect dalna hai
-            whispers: [ 
-                { word: "equations", hidden: "creativity" }, 
-                { word: "unknown", hidden: "mystery"} ]
+            chapterLabel: "CHAPTER III", spineLabel: "FRACTAL DREAMS- CH.III", title: "FRACTAL<br>DREAMS", subtitle: "WHERE MATHS MEET CREATIVITY", themeTag: "✨ Puzzles & Discovery", dateText: "Written on 18 June 2026", signature: "— Soham Jadhao", 
+            text:`The world of signs,\nThe verse of puzzles.\nRelies on infinite shapes,\nThat's why geometry hustles.\n\nSomeone's stress reliever,\nSomeone's tensed summon.\nInfinite wonders in every pixel,\nOne who never starts is already undone.\n\nThe battle is between mindset,\nAnd a little about equations.\nThe one who never gives up,\nBecomes the master of all summations.\n\nShapes from the dispenser,\nInnovation within a single line.\nThough the theory stays unknown,\nCreativity makes one shine.`,
+            whispers: [ { word: "equations", hidden: "creativity" } , { word: "unknown", hidden: "mystery"} ]
        }
     ];
 
