@@ -1,6 +1,6 @@
 /* =====================================================================
-   THE MIDNIGHT LIBRARY ENGINE (ULTIMATE PRO EDITION) - ALL BUGS FIXED
-   Linter-Safe | Interactive Click Wax Seal | 11:11 Easter Egg | Feedback
+   THE MIDNIGHT LIBRARY ENGINE (ULTIMATE PRO EDITION)
+   Linter-Safe | Interactive Click Wax Seal | Dynamic JSON Fetching
    ===================================================================== */
 
 const twStates = new WeakMap();
@@ -8,48 +8,51 @@ const twStates = new WeakMap();
 document.addEventListener("DOMContentLoaded", () => {
     "use strict";
 
-    /* ======================================================
-       📜 POEM DATABASE (AUTO-BUILD)
-       ====================================================== */
-    const POEM_DATABASE = [
-        {
-            chapterLabel: "CHAPTER I", spineLabel: "ANCHOR - CH.I", title: "ANCHOR", subtitle: "A TRIBUTE TO MY FATHER", themeTag: "❤️ Family & Love", dateText: "A memory from 5 May, 2026", signature: "-- Soham Jadhao<br>Love You Pappa !!!!",
-            text: `You're my truth, my life,\nmy beginning, my end.\nYou know my weaknesses and flaws,\nyet you're my buddy and my friend.\n\nThis relation is not only of blood,\nbut of emotions and linked hearts too.\nAmong all the bonds I've ever known,\nyou're a part of me, I'm a part of you.\n\nAs love has no age limit,\nthat's why my love for you stays true.\nYour morals and your way of seeing life\nhave taught me something new.\n\nWords are too few to describe you,\neven calamities fear facing you.\nYou're present in my every breath,\nand I know what you truly mean to me.`,
-            whispers: [ { word: "friend", hidden: "mirror" }, { word: "blood", hidden: "soul" } ]
-        },
-        {
-            chapterLabel: "CHAPTER II", spineLabel: "SPORTSMAN - CH.II", title: "SPORTSMAN<br>SPIRIT", subtitle: "THE SPIRIT OF EXCELLENCE", themeTag: "⚡ Motivation", dateText: "Written on 14 March 2026", signature: "— Soham Jadhao",
-            text: `Ignite your fire.\nLearn from every downfall,\nBouncers will come and go,\nDon't fear the pavilion's call.\n\nNever get upset,\nFace every yorker,\nBuild your own present,\nYour ace will be your marker.\n\nSometimes a hundred,\nSometimes a duck,\nGive your best always,\nAnd leave the rest to luck.\n\nThe past is your best teacher,\nThe future, an unseen creature,\nSpread your wings in the present sky,\nEvery great score begins with a try.`,
-            whispers: [ { word: "duck", hidden: "lesson" }, { word: "yorker", hidden: "downfall"} ]
-        },
-       {
-            chapterLabel: "CHAPTER III", spineLabel: "FRACTAL DREAMS- CH.III", title: "FRACTAL<br>DREAMS", subtitle: "WHERE MATHS MEET CREATIVITY", themeTag: "✨ Puzzles & Discovery", dateText: "Written on 18 June 2026", signature: "— Soham Jadhao", 
-            text:`The world of signs,\nThe verse of puzzles.\nRelies on infinite shapes,\nThat's why geometry hustles.\n\nSomeone's stress reliever,\nSomeone's tensed summon.\nInfinite wonders in every pixel,\nOne who never starts is already undone.\n\nThe battle is between mindset,\nAnd a little about equations.\nThe one who never gives up,\nBecomes the master of all summations.\n\nShapes from the dispenser,\nInnovation within a single line.\nThough the theory stays unknown,\nCreativity makes one shine.`,
-            whispers: [ { word: "equations", hidden: "creativity" }, { word: "unknown", hidden: "mystery"} ]
-       }
-    ];
-
-    const UPCOMING_CHAPTER = { chapterNum: "IV", title: "THE COSMOS WITHIN" };
+    // 🟢 AB POEMS YAHAN KHALI HAIN, DATA JSON SE AAYEGA!
+    let POEM_DATABASE = []; 
+    const UPCOMING_CHAPTER = { chapterNum: "IV", title: "THE UNSEEN REALM" };
 
     const globalState = { activeTheme: "dark", isAudioPlaying: false, vortexActive: false, secretClicks: 0, notesVisitCount: 0, secretPassword: "", hasTappedMoon: false, hasTypedWord: false, rainActive: false, visitorName: "Wanderer", elevenElevenTriggered: false, zenModeActive: false };
 
     const midnightThoughts = ["The moon has seen every version of you.", "Not every chapter deserves a sequel.", "Some memories glow brighter after they're gone.", "The hardest part of moving forward is not looking back.", "We bury our loudest screams in the quietest poetry."];
     const moonWords = ["silence", "poetry", "creation", "memories", "love", "solitude", "eternity"];
-    const starCoords = [{top: 50, left: 20}, {top: 20, left: 50}, {top: 60, left: 80}, {top: 80, left: 40}, {top: 30, left: 85}, {top: 75, left: 15}];
+    
+    // Star map ke liye extra coordinates daal diye hain future poems ke liye
+    const starCoords = [
+        {top: 50, left: 20}, {top: 20, left: 50}, {top: 60, left: 80}, 
+        {top: 80, left: 40}, {top: 30, left: 85}, {top: 75, left: 15},
+        {top: 40, left: 10}, {top: 15, left: 75}, {top: 85, left: 80}, {top: 55, left: 50}
+    ];
 
     const audioPageTurn = document.getElementById("audio-page-turn");
     const audioRain = document.getElementById("audio-rain");
     const audioAmbient = document.getElementById("audio-ambient");
 
-    // All Initializations
-    buildLibrarySystem(); 
+    // 🟢 FETCH FUNCTION: Yeh tere JSON file se data layega
+    async function loadLibraryData() {
+        try {
+            const response = await fetch('poems.json'); // File khinch raha hai
+            if (!response.ok) throw new Error("Network response was not ok");
+            
+            POEM_DATABASE = await response.json(); // Data array mein save ho gaya
+            
+            // Data aane ke baad Library banayenge
+            buildLibrarySystem(); 
+            initLedger(); // Ledger ko bhi naye elements ke hisaab se bind karenge
+        } catch (error) {
+            console.error("Error loading the Midnight Library Archives:", error);
+            const bookshelf = document.getElementById("dynamic-bookshelf");
+            if (bookshelf) bookshelf.innerHTML = "<p style='color: var(--gold);'>The archives are currently silent... (Check JSON file)</p>";
+        }
+    }
+
+    // Initialize core non-dynamic features
     initTimeGreeting();
     initClockAndAtmosphere(); 
     initUltimateUniverseBackground(); 
     initCosmicNavigation(); 
     initScrollProgressBar(); 
     initSecretKeyboardVault(); 
-    initLedger();
     initDynamicShadows(); 
     initTimeCapsule(); 
     initPassport(); 
@@ -58,9 +61,10 @@ document.addEventListener("DOMContentLoaded", () => {
     initZenMode();
     initFeedbackModal();
 
-    /* ======================================================
-       📱 PWA INSTALL APP LOGIC
-       ====================================================== */
+    // 🟢 Start Loading Data
+    loadLibraryData();
+
+    // App Install PWA Script
     let deferredPrompt;
     const installBtn = document.getElementById('installAppBtn');
     if (installBtn) {
@@ -69,7 +73,6 @@ document.addEventListener("DOMContentLoaded", () => {
             deferredPrompt = e;
             installBtn.style.display = 'inline-block';
         });
-
         installBtn.addEventListener('click', async () => {
             if (deferredPrompt) {
                 deferredPrompt.prompt();
@@ -80,6 +83,8 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
+    // --------- BAQI SAARE FUNCTIONS PEHLE JAISE HAIN ---------
 
     function initTimeGreeting() {
         const greetingEl = document.getElementById("time-greeting");
@@ -234,11 +239,17 @@ document.addEventListener("DOMContentLoaded", () => {
         if(starMap) {
             let svgLines = ''; let starsHtml = '';
             for (let i = 0; i < POEM_DATABASE.length; i++) {
-                let p1 = starCoords[i]; starsHtml += `<div class="star-node active-star trigger-nav" data-target="poem-page-${i+1}" title="${POEM_DATABASE[i].dateText} - ${POEM_DATABASE[i].title.replace('<br>',' ')}" style="top: ${p1.top}%; left: ${p1.left}%;"></div>`;
-                if (i < POEM_DATABASE.length - 1) { let p2 = starCoords[i+1]; svgLines += `<line x1="${p1.left}%" y1="${p1.top}%" x2="${p2.left}%" y2="${p2.top}%" stroke="rgba(191,164,111,0.4)" stroke-width="1" stroke-dasharray="4" />`; }
+                // Ensure we don't run out of star coordinates
+                let p1 = starCoords[i % starCoords.length]; 
+                starsHtml += `<div class="star-node active-star trigger-nav" data-target="poem-page-${i+1}" title="${POEM_DATABASE[i].dateText} - ${POEM_DATABASE[i].title.replace('<br>',' ')}" style="top: ${p1.top}%; left: ${p1.left}%;"></div>`;
+                if (i < POEM_DATABASE.length - 1) { 
+                    let p2 = starCoords[(i+1) % starCoords.length]; 
+                    svgLines += `<line x1="${p1.left}%" y1="${p1.top}%" x2="${p2.left}%" y2="${p2.top}%" stroke="rgba(191,164,111,0.4)" stroke-width="1" stroke-dasharray="4" />`; 
+                }
             }
             if (POEM_DATABASE.length > 0) {
-                let lastStar = starCoords[POEM_DATABASE.length - 1]; let lockedStar = starCoords[POEM_DATABASE.length];
+                let lastStar = starCoords[(POEM_DATABASE.length - 1) % starCoords.length]; 
+                let lockedStar = starCoords[POEM_DATABASE.length % starCoords.length];
                 svgLines += `<line x1="${lastStar.left}%" y1="${lastStar.top}%" x2="${lockedStar.left}%" y2="${lockedStar.top}%" stroke="rgba(191,164,111,0.1)" stroke-width="1" stroke-dasharray="4" />`;
                 starsHtml += `<div class="star-node pulse-star interactive-locked" title="Awaiting Completion..." style="top: ${lockedStar.top}%; left: ${lockedStar.left}%;"></div>`;
             }
@@ -344,20 +355,24 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         renderLedger();
 
-        document.body.addEventListener('click', (e) => {
-            if(e.target.classList.contains('ledger-submit')) {
-                const parentDiv = e.target.closest('.visitor-journal');
-                const input = parentDiv.querySelector('.ledger-input');
-                if(input && input.value.trim() !== "") {
-                    entries.unshift({ text: input.value.trim(), date: new Date().toLocaleDateString("en-US", { month: 'short', day: 'numeric', year: 'numeric' }) });
-                    if(entries.length > 10) entries.pop(); 
-                    localStorage.setItem('midnightLedger', JSON.stringify(entries)); 
-                    input.value = ""; 
-                    showToast("🖋️ Your silence has been recorded."); 
-                    renderLedger();
+        // Ensure we only bind this ONCE on the body, not repeatedly
+        if(!window.ledgerBound) {
+            document.body.addEventListener('click', (e) => {
+                if(e.target.classList.contains('ledger-submit')) {
+                    const parentDiv = e.target.closest('.visitor-journal');
+                    const input = parentDiv.querySelector('.ledger-input');
+                    if(input && input.value.trim() !== "") {
+                        entries.unshift({ text: input.value.trim(), date: new Date().toLocaleDateString("en-US", { month: 'short', day: 'numeric', year: 'numeric' }) });
+                        if(entries.length > 10) entries.pop(); 
+                        localStorage.setItem('midnightLedger', JSON.stringify(entries)); 
+                        input.value = ""; 
+                        showToast("🖋️ Your silence has been recorded."); 
+                        renderLedger();
+                    }
                 }
-            }
-        });
+            });
+            window.ledgerBound = true;
+        }
     }
 
     function toggleRain() {
@@ -448,9 +463,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const newPage = document.getElementById(target);
                 if(newPage) {
                     newPage.classList.add('active');
-                    window.scrollTo(0, 0); // Reset scroll position for new page
                     
-                    // Resume animation if seal was already broken
                     const pageSealWrapper = newPage.querySelector('.seal-clickable');
                     if (!pageSealWrapper || pageSealWrapper.classList.contains('broken')) {
                         const typewriters = newPage.querySelectorAll('.typewriter-poem');
@@ -470,7 +483,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
             
-            // General Buttons
             if(e.target.classList.contains('resonate-btn')) showToast(`❤️ "${e.target.getAttribute('data-poem')}" added to your saved echoes.`);
             if(e.target.classList.contains('bookmark-btn')) showToast(`🔖 Bookmark placed.`);
             if(e.target.classList.contains('share-poem-btn')) {
@@ -505,7 +517,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // --- FLAWLESS TYPEWRITER ENGINE (Resume Fix) ---
     function initTypewriterEngine(el) {
         if (!twStates.has(el)) {
             twStates.set(el, { lineIndex: 0, charIndex: 0, outHtml: "", status: "unstarted" });
