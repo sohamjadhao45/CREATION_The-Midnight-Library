@@ -1,19 +1,31 @@
 /* =====================================================================
-   THE MIDNIGHT LIBRARY ENGINE (THE HOSTEL FAREWELL EDITION)
-   Zero Cache | 1080p Canvas Render | Audio Narrator | JSON Fetch
+   THE MIDNIGHT LIBRARY ENGINE (THE HOSTEL FAREWELL EDITION - BULLETPROOF)
+   Indestructible Fallback | JSON Fetch | HQ Canvas | Audio Narrator
    ===================================================================== */
 
-// 🔴 AGGRESSIVE CACHE KILLER: Hamesha ke liye offline mode band!
+// 🔴 AGGRESSIVE CACHE KILLER
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.getRegistrations().then(function(registrations) {
-        for(let registration of registrations) {
-            registration.unregister();
-        }
+        for(let registration of registrations) { registration.unregister(); }
     });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
     "use strict";
+
+    /* --- FALLBACK DATABASE (Website kabhi blank nahi hogi) --- */
+    const FALLBACK_POEMS = [
+        {
+            chapterLabel: "CHAPTER I", spineLabel: "ANCHOR - CH.I", title: "ANCHOR", subtitle: "A TRIBUTE TO MY FATHER", themeTag: "❤️ Family & Love", dateText: "A memory from 5 May, 2026", signature: "-- Soham Jadhao<br>Love You Pappa !!!!",
+            text: `You're my truth, my life,\nmy beginning, my end.\nYou know my weaknesses and flaws,\nyet you're my buddy and my friend.\n\nThis relation is not only of blood,\nbut of emotions and linked hearts too.\nAmong all the bonds I've ever known,\nyou're a part of me, I'm a part of you.\n\nAs love has no age limit,\nthat's why my love for you stays true.\nYour morals and your way of seeing life\nhave taught me something new.\n\nWords are too few to describe you,\neven calamities fear facing you.\nYou're present in my every breath,\nand I know what you truly mean to me.`,
+            whispers: [ { word: "friend", hidden: "mirror" }, { word: "blood", hidden: "soul" } ]
+        },
+        {
+            chapterLabel: "CHAPTER II", spineLabel: "SPORTSMAN - CH.II", title: "SPORTSMAN<br>SPIRIT", subtitle: "THE SPIRIT OF EXCELLENCE", themeTag: "⚡ Motivation", dateText: "Written on 14 March 2026", signature: "— Soham Jadhao",
+            text: `Ignite your fire.\nLearn from every downfall,\nBouncers will come and go,\nDon't fear the pavilion's call.\n\nNever get upset,\nFace every yorker,\nBuild your own present,\nYour ace will be your marker.\n\nSometimes a hundred,\nSometimes a duck,\nGive your best always,\nAnd leave the rest to luck.\n\nThe past is your best teacher,\nThe future, an unseen creature,\nSpread your wings in the present sky,\nEvery great score begins with a try.`,
+            whispers: [ { word: "duck", hidden: "lesson" } ]
+        }
+    ];
 
     let POEM_DATABASE = []; 
     const UPCOMING_CHAPTER = { chapterNum: "IV", title: "THE UNSEEN REALM" };
@@ -34,23 +46,29 @@ document.addEventListener("DOMContentLoaded", () => {
     const audioAmbient = document.getElementById("audio-ambient");
 
     /* ======================================================
-       1. JSON FETCHING & LIBRARY BUILDER
+       1. BULLETPROOF FETCHING (Kavach)
        ====================================================== */
     async function loadLibraryData() {
         try {
             const response = await fetch('poems.json'); 
-            POEM_DATABASE = await response.json(); 
-            buildLibrarySystem(); 
-            initLibraryFeatures();
-            initSecretKeyboardVault();
+            if (!response.ok) throw new Error("JSON Fetch Failed");
+            const data = await response.json();
+            POEM_DATABASE = Array.isArray(data) && data.length > 0 ? data : FALLBACK_POEMS;
         } catch (error) {
-            console.log("JSON Error");
+            console.warn("Using Fallback Database to prevent crash.");
+            POEM_DATABASE = FALLBACK_POEMS; // Agar error aaya toh backup use karega!
         }
+        
+        // Yeh line hamesha chalegi ab!
+        buildLibrarySystem(); 
+        initLibraryFeatures();
+        initSecretKeyboardVault();
     }
 
     initClockAndAtmosphere(); initUltimateUniverseBackground(); initCosmicNavigation(); 
     initScrollProgressBar(); initLedger(); initDynamicShadows(); initBookmarksDrawer(); 
     initFavouritesDrawer(); initTimeCapsule(); initPassport(); initTouchRipple(); init1111Wish(); initAuthorsDesk(); 
+    
     loadLibraryData();
 
     function initPassport() {
@@ -68,7 +86,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 const letterTitle = document.getElementById("reader-letter-title");
                 if(letterTitle) letterTitle.innerText = `A LETTER TO ${name.toUpperCase()}`;
                 
-                // Fail-safe entrance
                 const introScreen = document.getElementById("intro-screen");
                 if(introScreen) introScreen.classList.add("fade-out");
                 
@@ -80,6 +97,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    /* ======================================================
+       2. BUILDING THE LIBRARY (Buttons & Nav)
+       ====================================================== */
     function buildLibrarySystem() {
         const nav = document.getElementById("library-nav"); const bookshelf = document.getElementById("dynamic-bookshelf"); const starMap = document.getElementById("star-map"); const secretPage = document.getElementById("page-secret");
         if(!nav || !bookshelf) return;
@@ -139,7 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /* ======================================================
-       2. CANVAS DRAWING (NO SQUISH, 1080x1920 HD)
+       3. CANVAS HD DRAWING (HQ Share & Save)
        ====================================================== */
     function createPoemCanvas(poem) {
         const canvas = document.createElement("canvas");
@@ -183,17 +203,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /* ======================================================
-       3. GLOBAL CLICK LISTENERS (Save, Share, Audio, Favs)
+       4. ALL BUTTON CLICKS
        ====================================================== */
     document.body.addEventListener('click', (e) => {
-        // DOWNLOAD
         if(e.target.classList.contains('download-poem-btn')) {
             const pIdx = e.target.getAttribute('data-poem-index'); if(pIdx === null) return;
             const canvas = createPoemCanvas(POEM_DATABASE[pIdx]);
             const link = document.createElement("a"); link.download = `${POEM_DATABASE[pIdx].title.replace(/<br>/g,'')}_Memory.png`; 
             link.href = canvas.toDataURL("image/png"); link.click(); showToast("📸 Memory Saved to Gallery!");
         }
-        // SHARE
         if(e.target.classList.contains('share-poem-btn')) {
             const pIdx = e.target.getAttribute('data-poem-index'); if(pIdx === null) return;
             const poem = POEM_DATABASE[pIdx];
@@ -209,7 +227,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }, 'image/png');
         }
-        // AUDIO NARRATOR
         if(e.target.classList.contains('listen-btn')) {
             const btn = e.target;
             if (window.speechSynthesis.speaking) { window.speechSynthesis.cancel(); btn.innerHTML = "🎙️ LISTEN TO THE POEM"; showToast("🛑 Narration stopped."); return; }
@@ -219,7 +236,6 @@ document.addEventListener("DOMContentLoaded", () => {
             btn.innerHTML = "🛑 STOP LISTENING"; showToast("🎙️ The narrator begins reading...");
             utterance.onend = () => { btn.innerHTML = "🎙️ LISTEN TO THE POEM"; };
         }
-        // FAVOURITES & BOOKMARKS
         if(e.target.classList.contains('resonate-btn')) {
             const title = e.target.getAttribute('data-poem') || "A Beautiful Verse"; let favs = JSON.parse(localStorage.getItem('midnightFavs') || '[]');
             if (!favs.includes(title)) { favs.push(title); localStorage.setItem('midnightFavs', JSON.stringify(favs)); e.target.classList.add('active-fav'); showToast("❤️ Added to Favourites."); updateSavedDrawers(); } else { showToast("✨ Already in Favourites."); }
@@ -231,7 +247,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     /* ======================================================
-       4. DRAWERS & NAVIGATION
+       5. INTERACTIVITY & EFFECTS
        ====================================================== */
     function updateSavedDrawers() {
         const favList = document.getElementById("favourites-list"); const archList = document.getElementById("bookmarks-list");
@@ -292,15 +308,19 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    /* ======================================================
-       5. TYPEWRITER & EFFECTS
-       ====================================================== */
     function bindWaxSeals(page) {
         const sealWrap = page.querySelector(".wax-seal-wrapper:not(.broken)");
         if (!sealWrap) { initTypewriterEngine(); return; }
         if (sealWrap.dataset.isBroken === "true") { sealWrap.classList.add("broken"); initTypewriterEngine(); return; }
         const sealBtn = sealWrap.querySelector(".wax-seal"); showToast("👆 Click the wax seal to break it...");
         sealBtn.addEventListener('click', (e) => { sealWrap.dataset.isBroken = "true"; sealWrap.classList.add("broken"); showToast("🔓 The seal is broken."); setTimeout(initTypewriterEngine, 800); });
+    }
+
+    function applyWhispers(el, poemIndex) {
+        const pData = POEM_DATABASE[poemIndex]; if(!pData || !pData.whispers || el.dataset.whispersApplied === "true") return;
+        let html = el.innerHTML; pData.whispers.forEach(w => { const regex = new RegExp(`\\b${w.word}\\b`, 'gi'); html = html.replace(regex, `<span class="whisper-word" data-original="${w.word}" data-hidden="${w.hidden}">${w.word}</span>`); });
+        el.innerHTML = html; el.dataset.whispersApplied = "true";
+        el.querySelectorAll('.whisper-word').forEach(span => { span.addEventListener('click', function() { let curr = this.innerText; this.style.opacity = 0; setTimeout(() => { this.innerText = (curr.toLowerCase() === this.dataset.original.toLowerCase()) ? this.dataset.hidden : this.dataset.original; this.style.opacity = 1; this.classList.toggle('whispered'); }, 300); }); });
     }
 
     function initTypewriterEngine() {
@@ -311,7 +331,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const lines = text.replace(/\\n/g, '\n').split('\n'); const signEl = activePage.querySelector(".sign-animate"); const poemId = activePage.id + "-" + index;
             if (!window.twMasterState[poemId]) { window.twMasterState[poemId] = { lineIndex: 0, charIndex: 0, outHtml: "", status: "unstarted" }; el.innerHTML = ""; }
             let state = window.twMasterState[poemId];
-            if (state.status === "finished" || el.getAttribute("data-animated") === "true") { if(signEl) { signEl.classList.add("show-instantly"); } return; }
+            if (state.status === "finished" || el.getAttribute("data-animated") === "true") { if(signEl) { signEl.classList.add("show-instantly"); } if(poemIndex !== null) applyWhispers(el, poemIndex); return; }
             if (state.status === "typing") return; 
             state.status = "typing"; el.classList.add("is-typing");
             function typeNext() {
@@ -322,15 +342,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (state.charIndex === 0 && state.lineIndex === 0) { let char = currentLine.charAt(0); state.outHtml += `<span class="drop-cap-antique">${char}</span>`; el.innerHTML = state.outHtml; state.charIndex++; setTimeout(typeNext, 40);
                     } else if (state.charIndex < currentLine.length) { let isFirstChar = (state.charIndex === 0 && state.lineIndex === 0); el.innerHTML = state.outHtml + currentLine.substring(isFirstChar ? 1 : 0, state.charIndex + 1); state.charIndex++; setTimeout(typeNext, 35); 
                     } else { state.outHtml = el.innerHTML + "<br>"; el.innerHTML = state.outHtml; state.lineIndex++; state.charIndex = 0; setTimeout(typeNext, 400); }
-                } else { state.status = "finished"; el.setAttribute("data-animated", "true"); el.classList.remove("is-typing"); if(signEl) { signEl.classList.add("active-sign"); } }
+                } else { state.status = "finished"; el.setAttribute("data-animated", "true"); el.classList.remove("is-typing"); if(signEl) { signEl.classList.add("active-sign"); } if(poemIndex !== null) applyWhispers(el, poemIndex); }
             }
             setTimeout(typeNext, 200);
         });
     }
 
-    /* ======================================================
-       6. VISUALS & UTILS
-       ====================================================== */
     function initDynamicShadows() { document.addEventListener('mousemove', (e) => { const x = (e.clientX / window.innerWidth - 0.5) * 20; const y = (e.clientY / window.innerHeight - 0.5) * 20; document.documentElement.style.setProperty('--shadow-x', `${x}px`); document.documentElement.style.setProperty('--shadow-y', `${15 + y}px`); }); }
     function initTimeCapsule() { const capsule = document.getElementById("time-capsule-item"); const status = document.getElementById("capsule-status"); if(!capsule || !status) return; if (new Date() >= new Date("January 1, 2027 00:00:00")) { status.innerHTML = `<span style="color:var(--gold);">Unlocked. "To the me who survived, thank you."</span>`; } else { status.innerText = "A letter to the future. Sealed until January 1, 2027."; } }
     function initScrollProgressBar() { window.addEventListener("scroll", () => { let st = window.scrollY || document.documentElement.scrollTop; let sh = document.documentElement.scrollHeight - window.innerHeight; const prog = document.getElementById("reading-progress"); if(prog) prog.style.width = sh > 0 ? ((st / sh) * 100) + "%" : "0%"; }); }
@@ -338,6 +355,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
     function initClockAndAtmosphere() {
         const dateEl = document.getElementById("journal-date"); if(dateEl) dateEl.innerText = `Journal Entry: ${new Date().toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })}`;
+        const rotatingWordEl = document.getElementById("secret-word"); let wordIndex = 0; if(rotatingWordEl) { setInterval(() => { rotatingWordEl.style.opacity = 0; setTimeout(() => { wordIndex = (wordIndex + 1) % moonWords.length; globalState.secretPassword = moonWords[wordIndex]; rotatingWordEl.innerText = globalState.secretPassword; rotatingWordEl.style.opacity = 1; }, 500); }, 4000); }
         const themeBtn = document.getElementById("theme-toggle"); if(themeBtn) { themeBtn.addEventListener("click", () => { const nextTheme = globalState.activeTheme === "dark" ? "light" : "dark"; document.documentElement.setAttribute("data-theme", nextTheme); themeBtn.innerText = nextTheme === "dark" ? "🌙 Night" : "☀️ Day"; globalState.activeTheme = nextTheme; }); }
         const rainToggleBtn = document.getElementById("rain-toggle"); if(rainToggleBtn) rainToggleBtn.addEventListener("click", toggleRain);
         const focusBtn = document.getElementById("reading-mode-toggle"); const exitFocusBtn = document.getElementById("exit-focus-btn"); function toggleFocus() { document.body.classList.toggle("reading-mode"); focusBtn.innerText = document.body.classList.contains("reading-mode") ? "👁️ Normal" : "📖 Focus"; } if(focusBtn) focusBtn.addEventListener("click", toggleFocus); if(exitFocusBtn) exitFocusBtn.addEventListener("click", toggleFocus);
@@ -375,7 +393,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function initSecretKeyboardVault() {
-        const wordDisplay = document.getElementById("secret-word"); if(wordDisplay) wordDisplay.innerText = "silence";
         let inputBuffer = ""; window.addEventListener("keydown", (e) => {
             if (e.key.length === 1 && e.key.match(/[a-z]/i)) inputBuffer += e.key.toLowerCase();
             if (inputBuffer.length > 7) inputBuffer = inputBuffer.substring(inputBuffer.length - 7);
@@ -392,36 +409,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function showToast(msg) { const container = document.getElementById("toast-container"); if(!container) return; const toast = document.createElement("div"); toast.className = "toast"; toast.innerText = msg; container.appendChild(toast); setTimeout(() => toast.remove(), 3500); }
 
-    /* ======================================================
-       7. THE AUTHOR'S DESK (Admin Portal)
-       ====================================================== */
-    function initAuthorsDesk() {
-        const trigger = document.getElementById('secret-admin-trigger');
-        const modal = document.getElementById('admin-modal');
-        const loginSection = document.getElementById('admin-auth-section');
-        const formSection = document.getElementById('admin-form-section');
-        const passInput = document.getElementById('admin-pass-input');
-        const loginBtn = document.getElementById('btn-admin-login');
-        const genBtn = document.getElementById('btn-generate-json');
-        const closeBtn = document.getElementById('btn-close-admin');
+    function initLibraryFeatures() {
+        const footerQuote = document.getElementById("quote-rotator"); if(footerQuote) footerQuote.innerText = quoteDatabase[Math.floor(Math.random() * quoteDatabase.length)];
+        const moonTrigger = document.getElementById("moon-phase");
+        if(moonTrigger) {
+            moonTrigger.addEventListener("click", () => {
+                globalState.secretClicks++; 
+                if(globalState.secretClicks === 3) { globalState.hasTappedMoon = true; showToast("🏆 Achievement Unlocked: Moonwalker"); document.querySelector(".trigger-nav[data-target='page-secret']")?.click() || document.getElementById('page-secret')?.classList.add('active'); globalState.secretClicks = 0; }
+            });
+        }
+        const thoughtBtn = document.getElementById("reveal-thought-btn"); const thoughtDisplay = document.getElementById("midnight-thought-display");
+        if(thoughtBtn && thoughtDisplay) { thoughtBtn.addEventListener("click", () => { thoughtDisplay.style.opacity = 0; setTimeout(() => { thoughtDisplay.innerText = `"${midnightThoughts[Math.floor(Math.random() * midnightThoughts.length)]}"`; thoughtDisplay.style.opacity = 0.8; }, 300); }); }
+    }
 
+    function initAuthorsDesk() {
+        const trigger = document.getElementById('secret-admin-trigger'); const modal = document.getElementById('admin-modal'); const loginSection = document.getElementById('admin-auth-section'); const formSection = document.getElementById('admin-form-section'); const passInput = document.getElementById('admin-pass-input'); const loginBtn = document.getElementById('btn-admin-login'); const genBtn = document.getElementById('btn-generate-json'); const closeBtn = document.getElementById('btn-close-admin');
         if(!trigger || !modal) return;
         trigger.addEventListener('click', () => { modal.style.display = 'flex'; passInput.value = ""; loginSection.style.display = 'block'; formSection.style.display = 'none'; });
         loginBtn.addEventListener('click', () => {
-            if(passInput.value === "soham123") { 
-                showToast("🔓 Access Granted. Welcome back, Scribe."); loginSection.style.display = 'none'; formSection.style.display = 'block';
-                document.getElementById('ap-date').value = new Date().toLocaleDateString('en-US', {day:'numeric', month:'short', year:'numeric'}).toUpperCase();
-                document.getElementById('ap-sign').value = "-- Soham Jadhao";
-            } else { showToast("❌ Invalid Master Seal Key."); }
+            if(passInput.value === "soham123") { showToast("🔓 Access Granted."); loginSection.style.display = 'none'; formSection.style.display = 'block'; document.getElementById('ap-date').value = new Date().toLocaleDateString('en-US', {day:'numeric', month:'short', year:'numeric'}).toUpperCase(); document.getElementById('ap-sign').value = "-- Soham Jadhao"; } else { showToast("❌ Invalid Key."); }
         });
-
         genBtn.addEventListener('click', () => {
             const ch = document.getElementById('ap-chapter')?.value.trim(); const lbl = document.getElementById('ap-label')?.value.trim(); const ttl = document.getElementById('ap-title')?.value.trim(); const sub = document.getElementById('ap-subtitle')?.value.trim(); const thm = document.getElementById('ap-theme')?.value.trim(); const spn = document.getElementById('ap-spine')?.value.trim(); const txt = document.getElementById('ap-text')?.value.trim(); const dt = document.getElementById('ap-date')?.value.trim(); const sgn = document.getElementById('ap-sign')?.value.trim();
             if(!ch || !ttl || !txt) { showToast("⚠️ Missing vital parameters."); return; }
-            const formattedText = txt.replace(/\n/g, '\\n');
-            const jsonObject = { chapterLabel: ch, spineLabel: spn || lbl, title: ttl, subtitle: sub || "A REFLECTION OF LIFE", themeTag: thm || "Motivation", text: formattedText, dateText: `A MEMORY FROM ${dt}`, signature: sgn };
-            const finalString = JSON.stringify(jsonObject, null, 2);
-            navigator.clipboard.writeText("," + finalString).then(() => { alert("✨ SUCCESS!\n\nYour new poem has been copied to your clipboard!"); modal.style.display = 'none'; }).catch(() => showToast("❌ Clipboard blocked."));
+            const jsonObject = { chapterLabel: ch, spineLabel: spn || lbl, title: ttl, subtitle: sub || "A REFLECTION OF LIFE", themeTag: thm || "Motivation", text: txt.replace(/\n/g, '\\n'), dateText: `A MEMORY FROM ${dt}`, signature: sgn };
+            navigator.clipboard.writeText("," + JSON.stringify(jsonObject, null, 2)).then(() => { alert("✨ SUCCESS! Copied to clipboard."); modal.style.display = 'none'; }).catch(() => showToast("❌ Clipboard blocked."));
         });
         closeBtn.addEventListener('click', () => { modal.style.display = 'none'; });
     }
