@@ -920,14 +920,14 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
 }
-        // 🟢 RENDER SAVED LISTS WITH INSTANT CLICK LOGIC (FAVOURITES & ARCHIVES)
+            // 🟢 RENDER SAVED LISTS WITH INSTANT CLICK LOGIC (FAVOURITES & ARCHIVES)
     function updateSavedPanels() {
         let favs = JSON.parse(localStorage.getItem('midnight_favourites') || '[]');
         let bookmarks = JSON.parse(localStorage.getItem('midnight_bookmarks') || '[]');
 
-        // Apne HTML ke Favourites aur Archives ke div IDs yahan match karna
-        const favContainer = document.getElementById('favourites-content'); 
-        const archContainer = document.getElementById('archives-content'); 
+        // 🎯 FIX: Yahan tere HTML wale exact IDs daal diye hain!
+        const favContainer = document.getElementById('favourites-list'); 
+        const archContainer = document.getElementById('bookmarks-list'); 
 
         // 1. Favourites list
         if (favContainer) {
@@ -955,7 +955,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        // 3. 🎯 THE REAL CLICK ENGINE (Tere apne trigger-nav system ko use karke)
+        // 3. 🎯 THE REAL CLICK ENGINE 
         document.querySelectorAll('.saved-item-row').forEach(item => {
             item.addEventListener('click', (e) => {
                 const targetTitle = item.getAttribute('data-poem-title');
@@ -964,20 +964,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     const poemIndex = POEM_DATABASE.findIndex(p => p.title === targetTitle || p.spineLabel === targetTitle);
                     
                     if (poemIndex !== -1) {
-                        // Khule hue panels band karo
                         document.getElementById('favourites-drawer')?.classList.remove('open');
                         document.getElementById('bookmarks-drawer')?.classList.remove('open');
                         
-                        // 🟢 TERE SYSTEM KA ASLI NAVIGATION TRIGGER KAREGA
                         const targetPageId = `poem-page-${poemIndex + 1}`;
                         const navButton = document.querySelector(`.trigger-nav[data-target="${targetPageId}"]`);
                         
                         if(navButton) {
-                            navButton.click(); // Nakkal click trigger karega, aur poem makkhan ki tarah khul jayegi!
+                            navButton.click(); 
                             window.scrollTo({ top: 0, behavior: 'smooth' });
                             showToast(`📖 Opening: ${targetTitle}`);
                         } else {
-                            // Backup deep link
                             window.location.href = `?poem=${encodeURIComponent(targetTitle)}`;
                         }
                     }
@@ -988,6 +985,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Ek baar shuru mein panels update karo
     updateSavedPanels();
-
+   
                                        
 });
