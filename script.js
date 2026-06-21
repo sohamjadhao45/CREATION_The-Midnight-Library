@@ -7,14 +7,19 @@ const twStates = new WeakMap();
 
 document.addEventListener("DOMContentLoaded", () => {
     "use strict";
-    // 🟢 PWA SERVICE WORKER REGISTRATION (Offline Mode)
+        // 🟢 PWA SERVICE WORKER REGISTRATION (AUTO-UPDATE MODE)
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('sw.js')
-                .then(reg => console.log('Service Worker Active: True Offline Mode ON ✈️'))
+                .then(reg => {
+                    console.log('Service Worker Active: True Offline Mode ON ✈️');
+                    // Yeh line har baar check karegi ki Soham ne naya update dala hai kya!
+                    reg.update(); 
+                })
                 .catch(err => console.error('Service Worker Failed:', err));
         });
     }
+
 
     // 🟢 PUSH NOTIFICATION PERMISSION ALARM
     function askNotificationPermission() {
