@@ -1,14 +1,20 @@
 /* =====================================================================
    THE MIDNIGHT LIBRARY ENGINE (THE HOSTEL FAREWELL EDITION - FIXED)
    Strict JSON Fetch | Zen Mode Mobile Fix | Global Gate Opener
-   ===================================================================== */
+===================================================================== */
 
-// 🔴 AGGRESSIVE LIVE NETWORK INJECTOR (Kill Service Worker Cache permanently)
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.getRegistrations().then(function(registrations) {
-        for(let registration of registrations) { registration.unregister(); }
+// 🔴 FIX 2: Commented out the Aggressive Live Network Injector. 
+// (Isse production website mein memory save hogi aur offline caching kaam karegi)
+/*
+if ('serviceWorker' in navigator) { 
+    navigator.serviceWorker.getRegistrations().then(function(registrations) { 
+        for(let registration of registrations) { 
+            registration.unregister(); 
+        } 
     });
 }
+*/
+
 
 document.addEventListener("DOMContentLoaded", () => {
     "use strict";
