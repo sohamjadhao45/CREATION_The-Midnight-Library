@@ -664,13 +664,39 @@ document.addEventListener("DOMContentLoaded", () => {
                 return; // Navigation hone ke baad code yahan ruk jayega
             }
             
-            // 🟢 4. POEM BOTTOM BUTTONS (Resonate, Bookmark, Share)
-            if(e.target.classList.contains('resonate-btn')) {
-                showToast(`❤️ "${e.target.getAttribute('data-poem')}" added to your saved echoes.`);
-            }
-            if(e.target.classList.contains('bookmark-btn')) {
-                showToast(`🔖 Bookmark placed.`);
-            }
+                // 🟢 4. POEM BOTTOM BUTTONS (Resonate, Bookmark, Share)
+    
+    // ❤️ FAVOURITE SAVE LOGIC
+    if(e.target.classList.contains('resonate-btn')) {
+        const poemTitle = e.target.getAttribute('data-poem'); // Button se naam nikala
+        
+        let currentFavs = JSON.parse(localStorage.getItem('midnight_favourites') || '[]');
+        if (poemTitle && !currentFavs.includes(poemTitle)) {
+            currentFavs.push(poemTitle);
+            localStorage.setItem('midnight_favourites', JSON.stringify(currentFavs));
+            
+            // List ko turant update karne ke liye
+            if (typeof updateSavedPanels === 'function') updateSavedPanels(); 
+        }
+        showToast(`❤️ "${poemTitle}" added to your saved echoes.`);
+    }
+
+    // 🔖 BOOKMARK SAVE LOGIC
+    if(e.target.classList.contains('bookmark-btn')) {
+        // Button se naam nikala (Share button jaisa data-poem-title bhi ho sakta hai)
+        const poemTitle = e.target.getAttribute('data-poem') || e.target.getAttribute('data-poem-title');
+        
+        let currentBookmarks = JSON.parse(localStorage.getItem('midnight_bookmarks') || '[]');
+        if (poemTitle && !currentBookmarks.includes(poemTitle)) {
+            currentBookmarks.push(poemTitle);
+            localStorage.setItem('midnight_bookmarks', JSON.stringify(currentBookmarks));
+            
+            // List ko turant update karne ke liye
+            if (typeof updateSavedPanels === 'function') updateSavedPanels();
+        }
+        showToast(`🔖 Bookmark placed.`);
+       }
+           
             if(e.target.classList.contains('share-poem-btn')) {
                 const title = e.target.getAttribute('data-poem-title');
                 if (navigator.share) {
@@ -896,5 +922,78 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
 }
-   
+    // 🟢 RENDER SAVED LISTS WITH INSTANT CLICK LOGIC (FAVOURITES & ARCHIVES)
+    function updateSavedPanels() {
+        let favs = JSON.parse(localStorage.getItem('midnight_favourites') || '[]');
+        let bookmarks = JSON.parse(localStorage.getItem('midnight_bookmarks') || '[]');
+
+        const favContainer = document.getElementById('favourites-content'); 
+        const archContainer = document.getElementById('archives-content'); 
+
+        // 1. Favourites list ko generate karna
+        if (favContainer) {
+            if (favs.length === 0) {
+                favContainer.innerHTML = `<p style="font-style:italic; opacity:0.6; text-align:center; padding: 20px 0;">No verses have resonated with you yet...</p>`;
+            } else {
+                favContainer.innerHTML = favs.map(title => 
+                    `<div class="saved-item-row" data-poem-title="${title}" style="padding: 12px 15px; border-bottom: 1px dashed rgba(191,164,111,0.2); cursor: pointer; display: flex; align-items: center; transition: background 0.3s;">
+                        <span style="color: var(--gold); font-family: 'Cinzel', serif; font-size: 14px; width: 100%;">❤️ ${title}</span>
+                    </div>`
+                ).join('');
+            }
+        }
+
+        // 2. Bookmarks/Archives list ko generate karna
+        if (archContainer) {
+            if (bookmarks.length === 0) {
+                archContainer.innerHTML = `<p style="font-style:italic; opacity:0.6; text-align:center; padding: 20px 0;">Your soul hasn't saved any verses yet..</p>`;
+            } else {
+                archContainer.innerHTML = bookmarks.map(title => 
+                    `<div class="saved-item-row" data-poem-title="${title}" style="padding: 12px 15px; border-bottom: 1px dashed rgba(191,164,111,0.2); cursor: pointer; display: flex; align-items: center; transition: background 0.3s;">
+                        <span style="color: var(--gold); font-family: 'Cinzel', serif; font-size: 14px; width: 100%;">🔖 ${title}</span>
+                    </div>`
+                ).join('');
+            }
+        }
+
+        // 3. 🎯 CLICK SE DIRECT POEM KHOLNE KA ENGINE
+        document.querySelectorAll('.saved-item-row').forEach(item => {
+            item.addEventListener('click', (e) => {
+                const targetTitle = item.getAttribute('data-poem-title');
+                
+                if (typeof POEM_DATABASE !== 'undefined') {
+                    const poemIndex = POEM_DATABASE.findIndex(p => p.title === targetTitle);
+                    
+                    if (poemIndex !== -1) {
+                        // A. Khule hue popup/modal ko close karo
+                        const activeModals = document.querySelectorAll('.modal.active, .panel.active, [id*="modal"].show, [id*="panel"].show');
+                        activeModals.forEach(modal => {
+                            modal.classList.remove('active', 'show');
+                            modal.style.display = 'none';
+                        });
+                        
+                        // B. Website ka function call karke poem open karo
+                        if (typeof openPoemView === 'function') {
+                            openPoemView(poemIndex);
+                        } else if (typeof showPoem === 'function') {
+                            showPoem(poemIndex);
+                        } else if (typeof loadPoem === 'function') {
+                            loadPoem(poemIndex);
+                        } else {
+                            window.location.href = `?poem=${encodeURIComponent(targetTitle)}`;
+                            return;
+                        }
+
+                        // C. Page ko smooth scroll karke top par le jao
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        showToast(`📖 Opening: ${targetTitle}`);
+                    }
+                }
+            });
+        });
+    }
+
+    // 🟢 Page load hote hi dono lists ko refresh/render karne ke liye call kiya
+    updateSavedPanels();
+                                       
 });
