@@ -537,53 +537,71 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // 🟢 FIXED HD CAMERA CONTEXT DOWNLOADER
+       // 🟢 PREMIUM ANTI-SQUISH DOWNLOAD ENGINE (REPLACED IN PLACE)
     function executeMemoryDownload(element) {
         if (typeof html2canvas === 'undefined') {
             showToast("⏳ Loading camera, please click again...");
             return;
         }
 
-        showToast("📸 Capturing crisp memory layout...");
+        showToast("📸 Capturing crisp memory...");
+
         document.fonts.ready.then(() => {
+            // Save state
+            const prevWidth = element.style.width;
+            const prevMaxWidth = element.style.maxWidth;
+            
+            // Force safe static dimensions
+            element.style.width = "600px";
+            element.style.maxWidth = "600px";
+
             html2canvas(element, {
                 useCORS: true,
                 allowTaint: false,
                 backgroundColor: "#151515", 
                 scale: 2.5, 
-                width: 500,
-                windowWidth: 1200,
+                width: 600,
                 onclone: (documentClone) => {
-                    const clonedCard = documentClone.getElementById(element.id);
+                    // Mismatch bypass karne ke liye cloned DOM ke andar direct class query lagai
+                    const clonedCard = documentClone.querySelector('.antique-parchment');
                     if (clonedCard) {
-                        clonedCard.style.width = "500px";
-                        clonedCard.style.padding = "50px 30px";
+                        clonedCard.style.width = "600px";
+                        clonedCard.style.maxWidth = "600px";
+                        clonedCard.style.padding = "50px 40px";
                         clonedCard.style.margin = "0 auto";
-                        clonedCard.style.display = "block";
                         clonedCard.style.transform = "none";
                         
-                        const textElement = clonedCard.querySelector('.typewriter-poem');
-                        if(textElement) {
-                            textElement.style.width = "100%";
-                            textElement.style.textAlign = "center";
-                            textElement.style.whiteSpace = "normal";
-                            textElement.style.wordBreak = "break-word";
+                        const pText = clonedCard.querySelector('.typewriter-poem');
+                        if (pText) {
+                            pText.style.width = "100%";
+                            pText.style.whiteSpace = "normal";
+                            pText.style.wordBreak = "break-word";
+                            pText.style.textAlign = "center";
                         }
                     }
                 }
             }).then(canvas => {
+                // Restore state
+                element.style.width = prevWidth;
+                element.style.maxWidth = prevMaxWidth;
+
                 const link = document.createElement('a');
-                link.download = `Midnight_Library_Memory_${Date.now()}.png`;
+                link.download = `Midnight_Memory_${Date.now()}.png`;
                 link.href = canvas.toDataURL('image/png', 1.0);
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
                 showToast("✨ Memory Card saved to storage!");
             }).catch(err => {
+                element.style.width = prevWidth;
+                element.style.maxWidth = prevMaxWidth;
                 console.error("Download failed:", err);
                 showToast("❌ Technical error saving image.");
             });
         });
     }
+
+    
 
     // 🟢 FIXED NATIVE ARRAYS SHARING CONTEXT
     function executeMemoryShare(element) {
@@ -737,19 +755,36 @@ document.addEventListener("DOMContentLoaded", () => {
                 showToast(`🔖 Bookmark placed.`);
             }
            
-            if(e.target.classList.contains('share-poem-btn')) {
+                        // 🟢 SMART CONTEXT SMART SHARE (Image + Text fallback)
+            
+            // 🟢 SMART CONTEXT SMART SHARE (Image + Text fallback integration)
+            if (e.target.classList.contains('share-poem-btn')) {
                 const targetPage = e.target.closest('.page');
                 if (targetPage) {
                     const pageId = targetPage.id;
                     const targetCard = document.getElementById(`card-${pageId}`);
+                    const poemTitle = e.target.getAttribute('data-poem-title') || "A Beautiful Verse";
+                    
+                    // Card ke andar se actual text aur lines extract karo fallback share ke liye
+                    const textEl = targetPage.querySelector('.typewriter-poem');
+                    const poemText = textEl ? textEl.innerText : "";
+
                     if (targetCard) {
-                        executeMemoryShare(targetCard);
-                    } else {
-                        showToast("❌ Card layout context array mismatch.");
+                        showToast("🔗 Preparing your share package...");
+                        
+                        if (typeof html2canvas === 'undefined') {
+                            const script = document.createElement('script');
+                            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+                            script.onload = () => executeMemoryShare(targetCard, poemTitle, poemText);
+                            document.head.appendChild(script);
+                        } else {
+                            executeMemoryShare(targetCard, poemTitle, poemText);
+                        }
                     }
                 }
                 return;
             }
+
 
             // 🎧 AUDIO NARRATOR ENGINE
             if(e.target.classList.contains('listen-btn') || e.target.closest('.listen-btn')) {
@@ -1135,11 +1170,82 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
 
-                closeBtn.addEventListener('click', () => { modal.style.display = 'none'; });
+                        closeBtn.addEventListener('click', () => { modal.style.display = 'none'; });
+    }
+
+    // 🟢 HYBRID IMAGE & SMART TEXT SHARING ENGINE
+    function executeMemoryShare(element, poemTitle, poemText) {
+        if (typeof html2canvas === 'undefined') {
+            showToast("⏳ Loading share engine...");
+            return;
+        }
+
+        const prevWidth = element.style.width;
+        const prevMaxWidth = element.style.maxWidth;
+        element.style.width = "600px";
+        element.style.maxWidth = "600px";
+
+        document.fonts.ready.then(() => {
+            html2canvas(element, {
+                useCORS: true,
+                allowTaint: false,
+                backgroundColor: "#151515",
+                scale: 2, 
+                width: 600,
+                onclone: (documentClone) => {
+                    const clonedCard = documentClone.querySelector('.antique-parchment');
+                    if (clonedCard) {
+                        clonedCard.style.width = "600px";
+                        clonedCard.style.maxWidth = "600px";
+                        clonedCard.style.padding = "50px 40px";
+                        clonedCard.style.margin = "0 auto";
+                        clonedCard.style.transform = "none";
+                    }
+                }
+            }).then(canvas => {
+                element.style.width = prevWidth;
+                element.style.maxWidth = prevMaxWidth;
+
+                canvas.toBlob((blob) => {
+                    if (!blob) {
+                        showToast("❌ Image compression failed.");
+                        return;
+                    }
+
+                    const file = new File([blob], `Midnight_Verse.png`, { type: 'image/png' });
+                    const formattedShareText = `📖 *${poemTitle}*\n\n"${poemText}"\n\nRead more at The Midnight Library: ${window.location.href}`;
+
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        navigator.share({
+                            files: [file],
+                            title: poemTitle,
+                            text: `A whisper from Soham's sanctuary... 🌙`
+                        })
+                        .then(() => showToast("✨ Card shared successfully!"))
+                        .catch((err) => console.log("Share skipped", err));
+                    } else {
+                        navigator.share({
+                            title: poemTitle,
+                            text: formattedShareText
+                        })
+                        .then(() => showToast("✨ Verse details shared successfully!"))
+                        .catch((err) => {
+                            navigator.clipboard.writeText(formattedShareText);
+                            showToast("📋 Text and link copied to clipboard!");
+                        });
+                    }
+                }, 'image/png');
+            }).catch(err => {
+                element.style.width = prevWidth;
+                element.style.maxWidth = prevMaxWidth;
+                showToast("❌ Share layout building failed.");
+            });
+        });
     }
 
     // 🟢 Sabhi Core Initialization Engines runtime call karo
     initAuthorsDesk();
-    updateSavedPanels(); 
+    updateSavedPanels();
                                        
 });
+                           
