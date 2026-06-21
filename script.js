@@ -504,9 +504,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
   
-            window.ledgerBound = true;
-        }
-    }
+            
 
     function toggleRain() {
         globalState.rainActive = !globalState.rainActive; 
@@ -922,15 +920,16 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
 }
-    // 🟢 RENDER SAVED LISTS WITH INSTANT CLICK LOGIC (FAVOURITES & ARCHIVES)
+        // 🟢 RENDER SAVED LISTS WITH INSTANT CLICK LOGIC (FAVOURITES & ARCHIVES)
     function updateSavedPanels() {
         let favs = JSON.parse(localStorage.getItem('midnight_favourites') || '[]');
         let bookmarks = JSON.parse(localStorage.getItem('midnight_bookmarks') || '[]');
 
+        // Apne HTML ke Favourites aur Archives ke div IDs yahan match karna
         const favContainer = document.getElementById('favourites-content'); 
         const archContainer = document.getElementById('archives-content'); 
 
-        // 1. Favourites list ko generate karna
+        // 1. Favourites list
         if (favContainer) {
             if (favs.length === 0) {
                 favContainer.innerHTML = `<p style="font-style:italic; opacity:0.6; text-align:center; padding: 20px 0;">No verses have resonated with you yet...</p>`;
@@ -943,7 +942,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        // 2. Bookmarks/Archives list ko generate karna
+        // 2. Bookmarks list
         if (archContainer) {
             if (bookmarks.length === 0) {
                 archContainer.innerHTML = `<p style="font-style:italic; opacity:0.6; text-align:center; padding: 20px 0;">Your soul hasn't saved any verses yet..</p>`;
@@ -956,44 +955,39 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        // 3. 🎯 CLICK SE DIRECT POEM KHOLNE KA ENGINE
+        // 3. 🎯 THE REAL CLICK ENGINE (Tere apne trigger-nav system ko use karke)
         document.querySelectorAll('.saved-item-row').forEach(item => {
             item.addEventListener('click', (e) => {
                 const targetTitle = item.getAttribute('data-poem-title');
                 
                 if (typeof POEM_DATABASE !== 'undefined') {
-                    const poemIndex = POEM_DATABASE.findIndex(p => p.title === targetTitle);
+                    const poemIndex = POEM_DATABASE.findIndex(p => p.title === targetTitle || p.spineLabel === targetTitle);
                     
                     if (poemIndex !== -1) {
-                        // A. Khule hue popup/modal ko close karo
-                        const activeModals = document.querySelectorAll('.modal.active, .panel.active, [id*="modal"].show, [id*="panel"].show');
-                        activeModals.forEach(modal => {
-                            modal.classList.remove('active', 'show');
-                            modal.style.display = 'none';
-                        });
+                        // Khule hue panels band karo
+                        document.getElementById('favourites-drawer')?.classList.remove('open');
+                        document.getElementById('bookmarks-drawer')?.classList.remove('open');
                         
-                        // B. Website ka function call karke poem open karo
-                        if (typeof openPoemView === 'function') {
-                            openPoemView(poemIndex);
-                        } else if (typeof showPoem === 'function') {
-                            showPoem(poemIndex);
-                        } else if (typeof loadPoem === 'function') {
-                            loadPoem(poemIndex);
+                        // 🟢 TERE SYSTEM KA ASLI NAVIGATION TRIGGER KAREGA
+                        const targetPageId = `poem-page-${poemIndex + 1}`;
+                        const navButton = document.querySelector(`.trigger-nav[data-target="${targetPageId}"]`);
+                        
+                        if(navButton) {
+                            navButton.click(); // Nakkal click trigger karega, aur poem makkhan ki tarah khul jayegi!
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                            showToast(`📖 Opening: ${targetTitle}`);
                         } else {
+                            // Backup deep link
                             window.location.href = `?poem=${encodeURIComponent(targetTitle)}`;
-                            return;
                         }
-
-                        // C. Page ko smooth scroll karke top par le jao
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                        showToast(`📖 Opening: ${targetTitle}`);
                     }
                 }
             });
         });
     }
 
-    // 🟢 Page load hote hi dono lists ko refresh/render karne ke liye call kiya
+    // Ek baar shuru mein panels update karo
     updateSavedPanels();
+
                                        
 });
