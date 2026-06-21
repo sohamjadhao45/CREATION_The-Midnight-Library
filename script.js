@@ -393,10 +393,11 @@ document.addEventListener("DOMContentLoaded", () => {
     /* ======================================================
        5. ZEN MODE (Auto-Scroll Mobile Bug Fixed), ATMOSPHERE & VISUALS
        ====================================================== */
-    let zenRAF;
+        let zenRAF;
     function smoothZenScroll() {
         if (globalState.zenModeActive) {
-            window.scrollBy({ top: 1, left: 0, behavior: 'auto' });
+            let currentY = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop;
+            window.scrollTo(0, currentY + 1);
             zenRAF = requestAnimationFrame(smoothZenScroll);
         }
     }
