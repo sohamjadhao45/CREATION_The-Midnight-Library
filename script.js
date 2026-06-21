@@ -681,16 +681,28 @@ document.addEventListener("DOMContentLoaded", () => {
                 showToast(`🔖 Bookmark placed.`);
             }
            
+                        // 🟢 PURE CARD SHARE TRIGGER (Bina URL share kiye, direct image share)
             if(e.target.classList.contains('share-poem-btn')) {
-                const title = e.target.getAttribute('data-poem-title');
-                if (navigator.share) {
-                    navigator.share({ title: title, url: window.location.href });
-                } else { 
-                    navigator.clipboard.writeText(window.location.href); 
-                    showToast("🔗 Link copied to clipboard!"); 
+                // Pehle is button se closest poem page ka element pakdo
+                const targetPage = e.target.closest('.page');
+                if (targetPage) {
+                    // Poem page ke andar jo card-card-poem-page-X wala div hai, use dhundo
+                    const targetCard = targetPage.querySelector('.poetry-box');
+                    if (targetCard) {
+                        showToast("🔗 Preparing your beautiful verse card for sharing...");
+                        if (typeof html2canvas === 'undefined') {
+                            const script = document.createElement('script');
+                            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+                            script.onload = () => executeMemoryShare(targetCard);
+                            document.head.appendChild(script);
+                        } else {
+                            executeMemoryShare(targetCard);
+                        }
+                    }
                 }
+                return;
             }
-
+           
             // 🎧 AUDIO NARRATOR ENGINE
             if(e.target.classList.contains('listen-btn') || e.target.closest('.listen-btn')) {
                 const btn = e.target.closest('.listen-btn') || e.target;
@@ -997,6 +1009,80 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
     }
+    // 🟢 PURE CARD SHARE ENGINE (FIXED FOR WEBSITE URL AND SQUISHED TEXT BUG)
+    function executeMemoryShare(element) {
+        if (typeof html2canvas === 'undefined') {
+            showToast("⏳ Loading share engine, please click again...");
+            return;
+        }
 
+        // Camera capture karne se pehle element ko fix karna (Anti-Squish)
+        const originalWidth = element.style.width;
+        const targetWidth = element.offsetWidth;
+        element.style.width = targetWidth + "px"; // Force mobile width
+
+        // Ensure karna ki fonts loaded hain
+        document.fonts.ready.then(() => {
+            html2canvas(element, {
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: "#121212",
+                scale: 2, // High quality image for sharing
+                width: targetWidth,
+                windowWidth: window.innerWidth,
+                onclone: (documentClone) => {
+                    const clonedElement = documentClone.getElementById(element.id);
+                    if(clonedElement) {
+                        clonedElement.style.padding = "30px 20px";
+                        clonedElement.style.margin = "0"; 
+                        
+                        // Copy typing lines completely if text animation states differ
+                        const sourceContainer = element.querySelector('.typewriter-poem');
+                        const clonedContainer = clonedElement.querySelector('.typewriter-poem');
+                        if(sourceContainer && clonedContainer) {
+                            clonedContainer.innerHTML = sourceContainer.innerHTML;
+                        }
+                    }
+                }
+            }).then(canvas => {
+                // UI ko wapas normal kar do
+                element.style.width = originalWidth;
+
+                // Canvas ko file file blob mein convert karna
+                canvas.toBlob((blob) => {
+                    if (!blob) {
+                        showToast("❌ Could not generate share image.");
+                        return;
+                    }
+
+                    const file = new File([blob], `Midnight_Verse_${Date.now()}.png`, { type: 'image/png' });
+
+                    // Web Share API check (Mobile native sharing menu trigger)
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        navigator.share({
+                            files: [file],
+                            title: 'Midnight Verses',
+                            text: 'A whisper from Soham\'s Sanctuary...'
+                        })
+                        .then(() => showToast("✨ Verse card shared successfully!"))
+                        .catch((err) => console.log("Share skipped/failed:", err));
+                    } else {
+                        // Safe fallback agar direct file layout blocking ho browser mein
+                        showToast("ℹ️ Sharing image natively unsupported. Downloading memory map instead!");
+                        const link = document.createElement('a');
+                        link.download = `Midnight_Verse_${Date.now()}.png`;
+                        link.href = canvas.toDataURL('image/png', 1.0);
+                        link.click();
+                    }
+                }, 'image/png');
+
+            }).catch(err => {
+                element.style.width = originalWidth;
+                console.error("Share capture failed:", err);
+                showToast("❌ Technical error creating share image.");
+            });
+        });
+    }
+   
     updateSavedPanels();                                 
 });
