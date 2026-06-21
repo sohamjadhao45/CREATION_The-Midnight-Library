@@ -52,8 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!response.ok) throw new Error("Network response was not ok");
             POEM_DATABASE = await response.json(); 
             buildLibrarySystem(); 
-                       initLibraryFilters(); // 🟢 Naya search filter chalu kiya
-           
+            initLibraryFilters(); // 🟢 Naya search filter chalu kiya
             initLedger(); 
         } catch (error) {
             console.error("Error loading the Midnight Library Archives:", error);
@@ -74,7 +73,6 @@ document.addEventListener("DOMContentLoaded", () => {
     initPassport(); 
     initTouchRipple(); 
     init1111Wish(); 
-    initZenMode();
     initFeedbackModal();
 
     loadLibraryData();
@@ -99,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-        // 🟢 SMART WEATHER & TIME GREETING ENGINE
+    // 🟢 SMART WEATHER & TIME GREETING ENGINE
     const WEATHER_API_KEY = "YAHAN_APNI_OPENWEATHER_API_KEY_PASTE_KARO"; // 👈 Apni Key yahan daalna
 
     async function initTimeGreeting() {
@@ -123,13 +121,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${WEATHER_API_KEY}&units=metric`);
                     const data = await res.json();
                     
-                    const weatherCondition = data.weather[0].main.toLowerCase(); // e.g., rain, clouds, clear
+                    const weatherCondition = data.weather[0].main.toLowerCase();
                     const temp = Math.round(data.main.temp);
                     
                     let weatherGreeting = `It's a beautiful day`;
                     if (weatherCondition.includes("rain") || weatherCondition.includes("drizzle")) {
                         weatherGreeting = `It's raining softly (${temp}°C)`;
-                        // 🌧️ AUTOMATIC RAIN TRIGGER: Agar sach mein baarish hai toh rain mode ON kar do!
                         if(!globalState.rainActive) toggleRain(); 
                     } else if (weatherCondition.includes("cloud")) {
                         weatherGreeting = `The sky is cloudy (${temp}°C)`;
@@ -143,14 +140,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     greetingEl.innerText = `${timeGreeting === "The night is quiet" ? timeGreeting + ", perfect for reading." : timeGreeting + ", Wanderer."}`;
                 }
             }, () => {
-                // User ne location block ki toh normal greeting
                 greetingEl.innerText = `${timeGreeting === "The night is quiet" ? timeGreeting + ", perfect for reading." : timeGreeting + ", Wanderer."}`;
             });
         } else {
             greetingEl.innerText = `${timeGreeting === "The night is quiet" ? timeGreeting + ", perfect for reading." : timeGreeting + ", Wanderer."}`;
         }
     }
-   
 
     function initTouchRipple() {
         document.body.addEventListener('click', (e) => {
@@ -171,17 +166,13 @@ document.addEventListener("DOMContentLoaded", () => {
         if(savedName && input) input.value = savedName;
 
         if(enterBtn) {
-                        enterBtn.addEventListener("click", () => {
+            enterBtn.addEventListener("click", () => {
                 let name = input ? input.value.trim() : "";
                 if(!name) name = "Wanderer";
                 localStorage.setItem("midnightVisitor", name);
                 globalState.visitorName = name;
                 
-                // 🟢 NAYA CODE: Button dabate hi Notification Permission mangega
                 askNotificationPermission(); 
-
-                // ... (Baki code waisa hi rahega)
-                           
                 
                 const greeting = document.getElementById("vault-greeting");
                 if(greeting) greeting.innerHTML = `Ah, <span style="color:var(--gold);">${name}</span>... welcome to the Secret Vault.`;
@@ -307,7 +298,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <span class="poem-greatvibes sign-animate">${poem.signature}</span>
                     <div class="poem-interactions mt-20">
                         <button class="resonate-btn" data-poem="${cleanTitle}">⭐ RESONATED WITH ME</button>
-                        <button class="listen-btn" title="Future Feature">🎙️ LISTEN TO THE POEM</button>
+                        <button class="listen-btn">🎙️ LISTEN TO THE POEM</button>
                     </div>
                     
                     <div class="visitor-journal mt-20" style="max-width: 100%; border-top: 1px dashed rgba(191,164,111,0.3); padding-top: 15px;">
@@ -414,13 +405,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    function initSecretKeyboardVault() {
-        window.addEventListener("keydown", (e) => {
-            // Keep keyboard safe and simple for background inputs if needed
-        });
-    }
-
-      // 🟢 GLOBAL LIVE LEDGER ENGINE (Firebase Integration)
+    // 🟢 GLOBAL LIVE LEDGER ENGINE (Firebase Integration)
     const firebaseConfig = {
       apiKey: "AIzaSyCSdODyXvhIEWsfkQEdjawRGY4yU3FviDs",
       authDomain: "creation-3c255.firebaseapp.com",
@@ -431,7 +416,6 @@ document.addEventListener("DOMContentLoaded", () => {
       appId: "1:451624734305:web:0b742be3d9a0059209a420"
     };
 
-    // Firebase ko shuru karna
     let database = null;
     if (typeof firebase !== 'undefined') {
         firebase.initializeApp(firebaseConfig);
@@ -442,7 +426,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const ledgerList = document.getElementById("ledger-list"); 
         if(!ledgerList) return;
 
-        // 1. Live Data Read Karna (Duniya bhar ke messages real-time mein)
         if (database) {
             database.ref('ledger_entries').limitToLast(15).on('value', (snapshot) => {
                 ledgerList.innerHTML = "";
@@ -457,7 +440,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             });
         } else {
-            // Fallback LocalStorage
             let entries = JSON.parse(localStorage.getItem('midnightLedger') || '[]');
             ledgerList.innerHTML = "";
             if(entries.length === 0) { 
@@ -469,7 +451,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        // 2. Message Submit Karne Par Live Database Mein Send Karna
         if(!window.ledgerBound) {
             document.body.addEventListener('click', (e) => {
                 if(e.target.classList.contains('ledger-submit')) {
@@ -482,15 +463,12 @@ document.addEventListener("DOMContentLoaded", () => {
                         };
 
                         if (database) {
-                            // 🌍 Real-Time Firebase Push
                             database.ref('ledger_entries').push(newEntry);
                         } else {
-                            // Local fallback
                             let entries = JSON.parse(localStorage.getItem('midnightLedger') || '[]');
                             entries.unshift(newEntry);
                             if(entries.length > 10) entries.pop(); 
                             localStorage.setItem('midnightLedger', JSON.stringify(entries));
-                            const event = new Event('click');
                             e.target.classList.add('local-refresh'); 
                         }
                         
@@ -503,8 +481,6 @@ document.addEventListener("DOMContentLoaded", () => {
             window.ledgerBound = true;
         }
     }
-  
-            
 
     function toggleRain() {
         globalState.rainActive = !globalState.rainActive; 
@@ -562,7 +538,6 @@ document.addEventListener("DOMContentLoaded", () => {
         setInterval(updateDate, 60000); 
     }
 
-    // 🟢 IMAGE DOWNLOADER ENGINE
     function executeMemoryDownload(element) {
         if (typeof html2canvas === 'undefined') {
             showToast("⏳ Loading camera, please click again...");
@@ -587,10 +562,9 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-        function initCosmicNavigation() {
+    function initCosmicNavigation() {
         document.body.addEventListener('click', (e) => {
             
-            // 🟢 1. MEMORY BUTTON LISTENER (Screenshot Feature)
             if(e.target.classList.contains('download-poem-btn')) {
                 const targetId = e.target.getAttribute('data-target');
                 const targetCard = document.getElementById(targetId);
@@ -608,7 +582,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // 🟢 2. WAX SEAL BREAK LOGIC
             const sealWrapper = e.target.closest('.seal-clickable');
             if (sealWrapper && !sealWrapper.classList.contains('broken')) {
                 sealWrapper.classList.add('broken');
@@ -628,7 +601,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 return; 
             }
 
-            // 🟢 3. BOOKSHELF & PAGE NAVIGATION FIX (Text ya book dono pe click chalega)
             const navTrigger = e.target.closest('.trigger-nav');
             if(navTrigger) {
                 if(audioPageTurn) {
@@ -659,41 +631,30 @@ document.addEventListener("DOMContentLoaded", () => {
                     globalState.notesVisitCount++;
                     checkUltimateVault();
                 }
-                return; // Navigation hone ke baad code yahan ruk jayega
+                return; 
             }
             
-                // 🟢 4. POEM BOTTOM BUTTONS (Resonate, Bookmark, Share)
-    
-    // ❤️ FAVOURITE SAVE LOGIC
-    if(e.target.classList.contains('resonate-btn')) {
-        const poemTitle = e.target.getAttribute('data-poem'); // Button se naam nikala
-        
-        let currentFavs = JSON.parse(localStorage.getItem('midnight_favourites') || '[]');
-        if (poemTitle && !currentFavs.includes(poemTitle)) {
-            currentFavs.push(poemTitle);
-            localStorage.setItem('midnight_favourites', JSON.stringify(currentFavs));
-            
-            // List ko turant update karne ke liye
-            if (typeof updateSavedPanels === 'function') updateSavedPanels(); 
-        }
-        showToast(`❤️ "${poemTitle}" added to your saved echoes.`);
-    }
+            if(e.target.classList.contains('resonate-btn')) {
+                const poemTitle = e.target.getAttribute('data-poem'); 
+                let currentFavs = JSON.parse(localStorage.getItem('midnight_favourites') || '[]');
+                if (poemTitle && !currentFavs.includes(poemTitle)) {
+                    currentFavs.push(poemTitle);
+                    localStorage.setItem('midnight_favourites', JSON.stringify(currentFavs));
+                    if (typeof updateSavedPanels === 'function') updateSavedPanels(); 
+                }
+                showToast(`❤️ "${poemTitle}" added to your saved echoes.`);
+            }
 
-    // 🔖 BOOKMARK SAVE LOGIC
-    if(e.target.classList.contains('bookmark-btn')) {
-        // Button se naam nikala (Share button jaisa data-poem-title bhi ho sakta hai)
-        const poemTitle = e.target.getAttribute('data-poem') || e.target.getAttribute('data-poem-title');
-        
-        let currentBookmarks = JSON.parse(localStorage.getItem('midnight_bookmarks') || '[]');
-        if (poemTitle && !currentBookmarks.includes(poemTitle)) {
-            currentBookmarks.push(poemTitle);
-            localStorage.setItem('midnight_bookmarks', JSON.stringify(currentBookmarks));
-            
-            // List ko turant update karne ke liye
-            if (typeof updateSavedPanels === 'function') updateSavedPanels();
-        }
-        showToast(`🔖 Bookmark placed.`);
-       }
+            if(e.target.classList.contains('bookmark-btn')) {
+                const poemTitle = e.target.getAttribute('data-poem') || e.target.getAttribute('data-poem-title');
+                let currentBookmarks = JSON.parse(localStorage.getItem('midnight_bookmarks') || '[]');
+                if (poemTitle && !currentBookmarks.includes(poemTitle)) {
+                    currentBookmarks.push(poemTitle);
+                    localStorage.setItem('midnight_bookmarks', JSON.stringify(currentBookmarks));
+                    if (typeof updateSavedPanels === 'function') updateSavedPanels();
+                }
+                showToast(`🔖 Bookmark placed.`);
+            }
            
             if(e.target.classList.contains('share-poem-btn')) {
                 const title = e.target.getAttribute('data-poem-title');
@@ -704,56 +665,49 @@ document.addEventListener("DOMContentLoaded", () => {
                     showToast("🔗 Link copied to clipboard!"); 
                 }
             }
-                        // 🎧 AUDIO NARRATOR (TEXT-TO-SPEECH) ENGINE
+
+            // 🎧 AUDIO NARRATOR ENGINE
             if(e.target.classList.contains('listen-btn') || e.target.closest('.listen-btn')) {
                 const btn = e.target.closest('.listen-btn') || e.target;
                 
-                // Agar aawaz pehle se chal rahi hai toh usko rok do (Stop functionality)
                 if (window.speechSynthesis.speaking) {
                     window.speechSynthesis.cancel();
-                    btn.innerHTML = "🎙️ Listen";
+                    btn.innerHTML = "🎙️ LISTEN TO THE POEM";
                     showToast("🛑 Narration stopped.");
                     return;
                 }
 
-                // Jis poem par click kiya hai, uska text dhoondho
                 const poemBox = btn.closest('.poem-text-container');
                 if (!poemBox) return;
                 
                 const poemTextElement = poemBox.querySelector('.typewriter-poem');
                 if (!poemTextElement) return;
 
-                let textToRead = poemTextElement.innerText; // Poem ka text nikal liya
+                let textToRead = poemTextElement.innerText; 
 
                 if ('speechSynthesis' in window) {
                     let utterance = new SpeechSynthesisUtterance(textToRead);
-                    utterance.rate = 0.85; // Aawaz ki speed thodi slow aur calm rakhi hai
-                    utterance.pitch = 0.9; // Aawaz thodi deep/bhari rakhi hai
+                    utterance.rate = 0.85; 
+                    utterance.pitch = 0.9; 
                     
-                    // Koshish karenge ki koi badhiya English voice mile (like UK English)
                     let voices = window.speechSynthesis.getVoices();
                     let calmVoice = voices.find(v => v.lang.includes('en-GB') || v.name.includes('UK') || v.name.includes('Google US English'));
                     if(calmVoice) utterance.voice = calmVoice;
 
                     window.speechSynthesis.speak(utterance);
                     
-                    btn.innerHTML = "🛑 Stop Listening";
+                    btn.innerHTML = "🛑 STOP LISTENING";
                     showToast("🎙️ The narrator begins reading...");
 
-                    // Jab poem khatam ho jaye, toh button ko wapas normal kar do
                     utterance.onend = function() {
-                        btn.innerHTML = "🎙️ Listen";
+                        btn.innerHTML = "🎙️ LISTEN TO THE POEM";
                     };
                 } else {
                     showToast("⚠️ Your device doesn't support audio narration.");
                 }
             }
-
         });
     }
-
-                
-                
 
     function initTypewriterEngine(el) {
         if (!twStates.has(el)) {
@@ -812,7 +766,7 @@ document.addEventListener("DOMContentLoaded", () => {
             } else { 
                 state.status = "finished"; 
                 el.classList.remove("is-typing"); 
-                if(signEl) { signEl.classList.add("active-sign"); } // 🟢 NAYA SIGNATURE ANIMATION FIX YAHAN HAI
+                if(signEl) { signEl.classList.add("active-sign"); } 
             }
         }
         typeWriter();
@@ -901,7 +855,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-        // 🟢 SMART SEARCH & MOOD FILTER ENGINE
     function initLibraryFilters() {
         const searchInput = document.getElementById('library-search');
         const moodBtns = document.querySelectorAll('.mood-btn');
@@ -913,15 +866,14 @@ document.addEventListener("DOMContentLoaded", () => {
             const activeMood = activeMoodBtn ? activeMoodBtn.getAttribute('data-mood') : "all";
             
             const spines = document.querySelectorAll('#dynamic-bookshelf .book-spine:not(.spine-locked)');
-            const lockedSpine = document.querySelector('.spine-locked'); // Locked book
+            const lockedSpine = document.querySelector('.spine-locked'); 
             
-            let visibleCount = 0; // Ginta hai kitni books mili
+            let visibleCount = 0; 
             
             spines.forEach((spine, index) => {
                 const poemData = POEM_DATABASE[index];
                 if(!poemData) return;
                 
-                // 🟢 FIX: Ab Title, Text ke sath Subtitle aur Tags mein bhi search karega!
                 const matchesSearch = poemData.title.toLowerCase().includes(searchTerm) || 
                                       poemData.text.toLowerCase().includes(searchTerm) ||
                                       poemData.subtitle.toLowerCase().includes(searchTerm) ||
@@ -930,25 +882,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 const matchesMood = activeMood === "all" || poemData.themeTag.includes(activeMood);
                 
                 if(matchesSearch && matchesMood) {
-                    spine.style.display = "flex"; // Dikhao
+                    spine.style.display = "flex"; 
                     visibleCount++;
                 } else {
-                    spine.style.display = "none"; // Chhupao
+                    spine.style.display = "none"; 
                 }
             });
 
-            // 🟢 HIDE LOCKED BOOK DURING SEARCH
             if(lockedSpine) {
                 if(searchTerm !== "" || activeMood !== "all") {
-                    lockedSpine.style.display = "none"; // Filter karne par black book hata do
+                    lockedSpine.style.display = "none"; 
                 } else {
-                    lockedSpine.style.display = "flex"; // Wapas lao jab sab clear ho
+                    lockedSpine.style.display = "flex"; 
                 }
             }
 
-            // 🟢 SHOW "NO RESULTS" MESSAGE
             if(visibleCount === 0 && noResultsMsg) {
-                noResultsMsg.style.display = "block"; // Agar ek bhi nahi mili toh message dikhao
+                noResultsMsg.style.display = "block"; 
             } else if(noResultsMsg) {
                 noResultsMsg.style.display = "none";
             }
@@ -963,17 +913,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 filterLibrary();
             });
         });
-}
-            // 🟢 RENDER SAVED LISTS WITH INSTANT CLICK LOGIC (FAVOURITES & ARCHIVES)
+    }
+
     function updateSavedPanels() {
         let favs = JSON.parse(localStorage.getItem('midnight_favourites') || '[]');
         let bookmarks = JSON.parse(localStorage.getItem('midnight_bookmarks') || '[]');
 
-        // 🎯 FIX: Yahan tere HTML wale exact IDs daal diye hain!
         const favContainer = document.getElementById('favourites-list'); 
         const archContainer = document.getElementById('bookmarks-list'); 
 
-        // 1. Favourites list
         if (favContainer) {
             if (favs.length === 0) {
                 favContainer.innerHTML = `<p style="font-style:italic; opacity:0.6; text-align:center; padding: 20px 0;">No verses have resonated with you yet...</p>`;
@@ -986,7 +934,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        // 2. Bookmarks list
         if (archContainer) {
             if (bookmarks.length === 0) {
                 archContainer.innerHTML = `<p style="font-style:italic; opacity:0.6; text-align:center; padding: 20px 0;">Your soul hasn't saved any verses yet..</p>`;
@@ -999,7 +946,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        // 3. 🎯 THE REAL CLICK ENGINE 
         document.querySelectorAll('.saved-item-row').forEach(item => {
             item.addEventListener('click', (e) => {
                 const targetTitle = item.getAttribute('data-poem-title');
@@ -1027,8 +973,5 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Ek baar shuru mein panels update karo
-    updateSavedPanels();
-   
-                                       
+    updateSavedPanels();                                 
 });
