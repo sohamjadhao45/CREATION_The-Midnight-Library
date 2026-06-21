@@ -306,8 +306,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     <p class="poem-date">${poem.dateText}</p>
                     <span class="poem-greatvibes sign-animate">${poem.signature}</span>
                     <div class="poem-interactions mt-20">
-                        <button class="resonate-btn" data-poem="${cleanTitle}">⭐ Resonated With Me</button>
-                        <button class="listen-btn" title="Future Feature">🎙️ Listen: SOON</button>
+                        <button class="resonate-btn" data-poem="${cleanTitle}">⭐ RESONATED WITH ME</button>
+                        <button class="listen-btn" title="Future Feature">🎙️ LISTEN TO THE POEM</button>
                     </div>
                     
                     <div class="visitor-journal mt-20" style="max-width: 100%; border-top: 1px dashed rgba(191,164,111,0.3); padding-top: 15px;">
@@ -704,7 +704,51 @@ document.addEventListener("DOMContentLoaded", () => {
                     showToast("🔗 Link copied to clipboard!"); 
                 }
             }
-            
+                        // 🎧 AUDIO NARRATOR (TEXT-TO-SPEECH) ENGINE
+            if(e.target.classList.contains('listen-btn') || e.target.closest('.listen-btn')) {
+                const btn = e.target.closest('.listen-btn') || e.target;
+                
+                // Agar aawaz pehle se chal rahi hai toh usko rok do (Stop functionality)
+                if (window.speechSynthesis.speaking) {
+                    window.speechSynthesis.cancel();
+                    btn.innerHTML = "🎙️ Listen";
+                    showToast("🛑 Narration stopped.");
+                    return;
+                }
+
+                // Jis poem par click kiya hai, uska text dhoondho
+                const poemBox = btn.closest('.poem-text-container');
+                if (!poemBox) return;
+                
+                const poemTextElement = poemBox.querySelector('.typewriter-poem');
+                if (!poemTextElement) return;
+
+                let textToRead = poemTextElement.innerText; // Poem ka text nikal liya
+
+                if ('speechSynthesis' in window) {
+                    let utterance = new SpeechSynthesisUtterance(textToRead);
+                    utterance.rate = 0.85; // Aawaz ki speed thodi slow aur calm rakhi hai
+                    utterance.pitch = 0.9; // Aawaz thodi deep/bhari rakhi hai
+                    
+                    // Koshish karenge ki koi badhiya English voice mile (like UK English)
+                    let voices = window.speechSynthesis.getVoices();
+                    let calmVoice = voices.find(v => v.lang.includes('en-GB') || v.name.includes('UK') || v.name.includes('Google US English'));
+                    if(calmVoice) utterance.voice = calmVoice;
+
+                    window.speechSynthesis.speak(utterance);
+                    
+                    btn.innerHTML = "🛑 Stop Listening";
+                    showToast("🎙️ The narrator begins reading...");
+
+                    // Jab poem khatam ho jaye, toh button ko wapas normal kar do
+                    utterance.onend = function() {
+                        btn.innerHTML = "🎙️ Listen";
+                    };
+                } else {
+                    showToast("⚠️ Your device doesn't support audio narration.");
+                }
+            }
+
         });
     }
 
