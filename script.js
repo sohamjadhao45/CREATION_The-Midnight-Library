@@ -1057,6 +1057,89 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
     }
+    // 🟢 THE AUTHOR'S DESK AUTOMATION ENGINE
+    function initAuthorsDesk() {
+        const trigger = document.getElementById('secret-admin-trigger');
+        const modal = document.getElementById('admin-modal');
+        const loginSection = document.getElementById('admin-auth-section');
+        const formSection = document.getElementById('admin-form-section');
+        const passInput = document.getElementById('admin-pass-input');
+        const loginBtn = document.getElementById('btn-admin-login');
+        const genBtn = document.getElementById('btn-generate-json');
+        const closeBtn = document.getElementById('btn-close-admin');
 
-    updateSavedPanels();                                 
+        if(!trigger || !modal) return;
+
+        // Hidden entry tool click listener
+        trigger.addEventListener('click', () => {
+            modal.style.display = 'flex';
+            passInput.value = "";
+            loginSection.style.display = 'block';
+            formSection.style.display = 'none';
+        });
+
+        // Safe client side validation
+        loginBtn.addEventListener('click', () => {
+            if(passInput.value === "soham123") { // 👈 Yeh tera password hai! Isko badal sakta hai tu
+                showToast("🔓 Access Granted. Welcome back, Scribe.");
+                loginSection.style.display = 'none';
+                formSection.style.display = 'block';
+                
+                // Fields default date parameters initialize karo
+                document.getElementById('ap-date').value = new Date().toLocaleDateString('en-US', {day:'numeric', month:'LONG', year:'numeric'}).toUpperCase();
+                document.getElementById('ap-sign').value = "-- Soham Jadhao";
+            } else {
+                showToast("❌ Invalid Master Seal Key.");
+            }
+        });
+
+        // Automatic JSON structure syntax copy builder
+        genBtn.addEventListener('click', () => {
+            const ch = document.getElementById('ap-chapter').value.trim();
+            const lbl = document.getElementById('ap-label').value.trim();
+            const ttl = document.getElementById('ap-title').value.trim();
+            const sub = document.getElementById('ap-subtitle').value.trim();
+            const thm = document.getElementById('ap-theme').value.trim();
+            const spn = document.getElementById('ap-spine').value.trim();
+            const txt = document.getElementById('ap-text').value.trim();
+            const dt = document.getElementById('ap-date').value.trim();
+            const sgn = document.getElementById('ap-sign').value.trim();
+
+            if(!ch || !ttl || !txt) {
+                showToast("⚠️ Missing vital parameters (Chapter, Title, Text).");
+                return;
+            }
+
+            // Automatic escaping arrays configuration tool
+            const formattedText = txt.replace(/\n/g, '\\n');
+
+            const jsonObject = {
+                chapterLabel: ch,
+                spineLabel: spn || lbl,
+                title: ttl,
+                subtitle: sub || "A REFLECTION OF LIFE",
+                themeTag: thm || "Motivation",
+                text: formattedText,
+                dateText: `A MEMORY FROM ${dt}`,
+                signature: sgn
+            };
+
+            const finalString = JSON.stringify(jsonObject, null, 2);
+            
+            // Clipboard integration array
+            navigator.clipboard.writeText("," + finalString).then(() => {
+                alert("✨ SUCCESS!\n\nYour new poem has been generated and copied to your clipboard with commas. Just open poems.json in GitHub, go to the end, paste it before the final closing bracket ], and save!");
+                modal.style.display = 'none';
+            }).catch(() => {
+                showToast("❌ Clipboard security blocked output block.");
+            });
+        });
+
+                closeBtn.addEventListener('click', () => { modal.style.display = 'none'; });
+    }
+
+    // 🟢 Sabhi Core Initialization Engines runtime call karo
+    initAuthorsDesk();
+    updateSavedPanels(); 
+                                       
 });
