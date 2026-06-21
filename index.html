@@ -94,7 +94,8 @@
         moon : <span id="secret-word" style="color: var(--gold); font-weight: bold;">silence</span>
       </p>
 
-      <button id="enter-library-btn" class="btn-solid" style="margin-top: 20px;">OPEN THE GATES</button>
+      <button id="enter-library-btn" class="btn-solid" style="margin-top: 20px; position: relative; z-index: 999999;" onclick="document.getElementById('intro-screen').style.opacity='0'; setTimeout(() => document.getElementById('intro-screen').style.display='none', 1000);">OPEN THE GATES</button>
+
       <button id="installAppBtn" class="btn-outline" style="display: none; margin-top: 15px;">INSTALL APP</button>
     </div>
   </div>
