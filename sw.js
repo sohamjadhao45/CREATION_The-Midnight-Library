@@ -1,6 +1,8 @@
-const CACHE_NAME = 'creation-dynamic-v1';
+const CACHE_NAME = 'midnight-bypass-v1';
 
-self.addEventListener('install', (e) => { self.skipWaiting(); });
+self.addEventListener('install', (e) => {
+    self.skipWaiting();
+});
 
 self.addEventListener('activate', (e) => {
     e.waitUntil(
@@ -8,7 +10,7 @@ self.addEventListener('activate', (e) => {
     );
 });
 
-// Hamesha Live Internet se fetch karega, agar offline hua tabhi cache check karega
+// ALWAYS FETCH FROM INTERNET
 self.addEventListener('fetch', (e) => {
-    e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+    e.respondWith(fetch(e.request));
 });
