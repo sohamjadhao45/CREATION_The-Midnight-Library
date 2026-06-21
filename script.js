@@ -150,16 +150,26 @@ document.addEventListener("DOMContentLoaded", () => {
     /* ======================================================
        2. CANVAS HD DRAWING (HQ Share & Save - No Squish)
        ====================================================== */
-    function createPoemCanvas(poem) {
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-        canvas.width = 1080; canvas.height = 1920;
-        
-        ctx.fillStyle = globalState.activeTheme === "dark" ? "#0b0b0f" : "#e8dcc7"; 
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        ctx.strokeStyle = "#bfa46f"; ctx.lineWidth = 4; 
-        ctx.strokeRect(50, 50, canvas.width - 100, canvas.height - 100);
+    /* ======================================================
+   2. CANVAS HD DRAWING (HQ Share & Save - No Squish)
+====================================================== */
+function createPoemCanvas(poem) {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = 1080;
+    canvas.height = 1920;
+
+    ctx.fillStyle = globalState.activeTheme === "dark" ? "#0b0b0f" : "#e8dcc7";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.strokeStyle = "#bfa46f";
+    ctx.lineWidth = 4;
+
+    // FIX 3: Adjusted width and height by subtracting 100 to keep a perfect 50px border on all sides.
+    ctx.strokeRect(50, 50, canvas.width - 100, canvas.height - 100);
+
+    // Yahan se aapka aage ka text draw karne ka logic as-is rahega...
+
         
         ctx.fillStyle = "#bfa46f"; ctx.textAlign = "center"; 
         ctx.font = "bold 60px Cinzel, serif"; 
