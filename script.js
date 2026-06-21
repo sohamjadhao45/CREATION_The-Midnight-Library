@@ -420,38 +420,90 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+      // 🟢 GLOBAL LIVE LEDGER ENGINE (Firebase Integration)
+    const firebaseConfig = {
+      apiKey: "AIzaSyCSdODyXvhIEWsfkQEdjawRGY4yU3FviDs",
+      authDomain: "creation-3c255.firebaseapp.com",
+      databaseURL: "https://creation-3c255-default-rtdb.firebaseio.com/", 
+      projectId: "creation-3c255",
+      storageBucket: "creation-3c255.firebasestorage.app",
+      messagingSenderId: "451624734305",
+      appId: "1:451624734305:web:0b742be3d9a0059209a420"
+    };
+
+    // Firebase ko shuru karna
+    let database = null;
+    if (typeof firebase !== 'undefined') {
+        firebase.initializeApp(firebaseConfig);
+        database = firebase.database();
+    }
+
     function initLedger() {
         const ledgerList = document.getElementById("ledger-list"); 
-        let entries = JSON.parse(localStorage.getItem('midnightLedger') || '[]');
-        
-        function renderLedger() {
-            if(!ledgerList) return; 
+        if(!ledgerList) return;
+
+        // 1. Live Data Read Karna (Duniya bhar ke messages real-time mein)
+        if (database) {
+            database.ref('ledger_entries').limitToLast(15).on('value', (snapshot) => {
+                ledgerList.innerHTML = "";
+                const data = snapshot.val();
+                if (!data) {
+                    ledgerList.innerHTML = `<p style="margin-bottom: 8px; font-style: italic; opacity:0.5;">No wandering souls have left a mark yet...</p>`;
+                    return;
+                }
+                const entriesArray = Object.values(data).reverse();
+                entriesArray.forEach(e => { 
+                    ledgerList.innerHTML += `<p style="margin-bottom: 8px; font-style: italic;">"${e.text}" <span style="font-size:11px; opacity:0.5;">— ${e.date}</span></p>`; 
+                });
+            });
+        } else {
+            // Fallback LocalStorage
+            let entries = JSON.parse(localStorage.getItem('midnightLedger') || '[]');
             ledgerList.innerHTML = "";
             if(entries.length === 0) { 
-                ledgerList.innerHTML = `<p style="margin-bottom: 8px; font-style: italic; opacity:0.5;">No wandering souls have left a mark yet...</p>`; 
+                ledgerList.innerHTML = `<p style="margin-bottom: 8px; font-style: italic; opacity:0.5;">No database connected yet...</p>`; 
             } else { 
                 entries.forEach(e => { 
                     ledgerList.innerHTML += `<p style="margin-bottom: 8px; font-style: italic;">"${e.text}" <span style="font-size:11px; opacity:0.5;">— ${e.date}</span></p>`; 
                 }); 
             }
         }
-        renderLedger();
 
+        // 2. Message Submit Karne Par Live Database Mein Send Karna
         if(!window.ledgerBound) {
             document.body.addEventListener('click', (e) => {
                 if(e.target.classList.contains('ledger-submit')) {
                     const parentDiv = e.target.closest('.visitor-journal');
                     const input = parentDiv.querySelector('.ledger-input');
                     if(input && input.value.trim() !== "") {
-                        entries.unshift({ text: input.value.trim(), date: new Date().toLocaleDateString("en-US", { month: 'short', day: 'numeric', year: 'numeric' }) });
-                        if(entries.length > 10) entries.pop(); 
-                        localStorage.setItem('midnightLedger', JSON.stringify(entries)); 
+                        const newEntry = {
+                            text: input.value.trim(),
+                            date: new Date().toLocaleDateString("en-US", { month: 'short', day: 'numeric', year: 'numeric' })
+                        };
+
+                        if (database) {
+                            // 🌍 Real-Time Firebase Push
+                            database.ref('ledger_entries').push(newEntry);
+                        } else {
+                            // Local fallback
+                            let entries = JSON.parse(localStorage.getItem('midnightLedger') || '[]');
+                            entries.unshift(newEntry);
+                            if(entries.length > 10) entries.pop(); 
+                            localStorage.setItem('midnightLedger', JSON.stringify(entries));
+                            const event = new Event('click');
+                            e.target.classList.add('local-refresh'); 
+                        }
+                        
                         input.value = ""; 
-                        showToast("🖋️ Your silence has been recorded."); 
-                        renderLedger();
+                        showToast("🖋️ Your silence has been recorded globally."); 
+                        if(!database) location.reload(); 
                     }
                 }
             });
+            window.ledgerBound = true;
+        }
+    }
+  
             window.ledgerBound = true;
         }
     }
