@@ -315,14 +315,49 @@
 
   </main>
 
-  <footer class="library-footer">
+    <footer class="library-footer" style="pointer-events: auto;">
     <div class="footer-divider"></div>
     <div id="quote-rotator">"Every silence contains a poem."</div>
-    <div class="footer-sub">| The Midnight Library • ©copyright • All rights reserved • 2026 • Fluid & Anti-Lag • Completely created by Soham Madan Jadhao |</div>
+    <div class="footer-sub">
+      | The Midnight Library • ©copyright • All rights reserved • 2026 • Fluid & Anti-Lag • 
+      Completely created by <span id="secret-admin-trigger" style="color: var(--gold); cursor: pointer; text-shadow: 0 0 5px var(--gold-glow);">Soham Madan Jadhao</span> |
+    </div>
   </footer>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
-  <script src="script.js"></script>
+
+  <div id="admin-modal" class="modal" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999999; align-items: center; justify-content: center; background: rgba(5,5,7,0.98); backdrop-filter: blur(8px);">
+    <div class="modal-content antique-parchment dynamic-shadow" style="padding: 30px; width: 95%; max-width: 600px; max-height: 85vh; overflow-y: auto;">
+      <h3 class="moon-glow" style="color:var(--gold); font-family:'Cinzel', serif; font-size: 24px; text-align: center; letter-spacing: 3px; margin-bottom: 20px;">AUTHOR'S DESK</h3>
+      
+      <div id="admin-auth-section" style="text-align: center; padding: 20px 0;">
+        <p style="font-family:'Cormorant Garamond'; font-size: 18px; margin-bottom: 15px;">Prove your identity, Scribe...</p>
+        <input type="password" id="admin-pass-input" class="passport-input" placeholder="Enter secret seal key..." style="margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto;">
+        <button id="btn-admin-login" class="btn-solid" style="width: 100%; max-width: 200px; display: block; margin: 0 auto;">Verify Seal</button>
+      </div>
+
+      <div id="admin-form-section" style="display: none;">
+        <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+          <input type="text" id="ap-chapter" class="passport-input" placeholder="e.g., CHAPTER IV" style="text-align: left; width: 50%;">
+          <input type="text" id="ap-label" class="passport-input" placeholder="e.g., CH.IV" style="text-align: left; width: 50%;">
+        </div>
+        <input type="text" id="ap-title" class="passport-input" placeholder="Poem Title" style="text-align: left; width: 100%; margin-bottom: 15px;">
+        <input type="text" id="ap-subtitle" class="passport-input" placeholder="Subtitle / Tribute" style="text-align: left; width: 100%; margin-bottom: 15px;">
+        <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+          <input type="text" id="ap-theme" class="passport-input" placeholder="Theme (e.g., Motivation)" style="text-align: left; width: 50%;">
+          <input type="text" id="ap-spine" class="passport-input" placeholder="Spine Label" style="text-align: left; width: 50%;">
+        </div>
+        
+        <textarea id="ap-text" class="passport-input" placeholder="Write your verses here...\nUse enter for new lines..." style="width: 100%; height: 120px; text-align: left; resize: none; margin-bottom: 15px; padding: 10px; line-height: 1.5;"></textarea>
+        
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+          <input type="text" id="ap-date" class="passport-input" placeholder="e.g., 21 JUNE 2026" style="text-align: left; width: 50%;">
+          <input type="text" id="ap-sign" class="passport-input" placeholder="Signature (e.g., -- Soham)" style="text-align: left; width: 50%;">
+        </div>
+
+        <button id="btn-generate-json" class="btn-solid" style="width: 100%; margin-bottom: 15px;">✨ GENERATE JSON BLOCK</button>
+        <button id="btn-close-admin" class="btn-outline" style="width: 100%;">Close Desk</button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
+
