@@ -1,6 +1,6 @@
 /* =====================================================================
-   THE MIDNIGHT LIBRARY ENGINE (THE HOSTEL FAREWELL EDITION)
-   Strict JSON Fetch | Zen Mode Restored | HQ Canvas | Audio Narrator
+   THE MIDNIGHT LIBRARY ENGINE (THE HOSTEL FAREWELL EDITION - FIXED)
+   Strict JSON Fetch | Zen Mode Mobile Fix | Global Gate Opener
    ===================================================================== */
 
 // 🔴 AGGRESSIVE LIVE NETWORK INJECTOR (Kill Service Worker Cache permanently)
@@ -31,22 +31,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const audioRain = document.getElementById("audio-rain");
     const audioAmbient = document.getElementById("audio-ambient");
 
-    // Core Init Framework Calls
-    try {
-        initClockAndAtmosphere();
-        initUltimateUniverseBackground();
-        initCosmicNavigation();
-        initScrollProgressBar();
-        initLedger();
-        initDynamicShadows();
-        initBookmarksDrawer();
-        initFavouritesDrawer();
-        initTimeCapsule();
-        initPassport();
-        initTouchRipple();
-        init1111Wish();
-        initAuthorsDesk();
-    } catch (e) { console.error("Visual Framework Warning:", e); }
+    // Core Init Framework Calls - Isolated so one error doesn't break the whole app
+    const coreEngines = [
+        initClockAndAtmosphere, initUltimateUniverseBackground, initCosmicNavigation, 
+        initScrollProgressBar, initLedger, initDynamicShadows, initBookmarksDrawer, 
+        initFavouritesDrawer, initTimeCapsule, initTouchRipple, init1111Wish, initAuthorsDesk
+    ];
+    coreEngines.forEach(engine => { try { engine(); } catch (e) { console.error("Engine Blocked:", e); } });
 
     /* ======================================================
        1. STRICT JSON FETCHING (No hardcoded Fallbacks)
@@ -66,32 +57,6 @@ document.addEventListener("DOMContentLoaded", () => {
         initSecretKeyboardVault();
     }
     loadLibraryData();
-
-    function initPassport() {
-        const inputName = document.getElementById("visitor-name");
-        const enterBtn = document.getElementById("enter-library-btn");
-        if(enterBtn) {
-            enterBtn.addEventListener("click", () => {
-                let name = inputName && inputName.value.trim() !== "" ? inputName.value.trim() : "Wanderer";
-                localStorage.setItem("midnightVisitor", name);
-                globalState.visitorName = name;
-                
-                const greeting = document.getElementById("vault-greeting");
-                if(greeting) greeting.innerHTML = `Ah, <span style="color:var(--gold);">${name}</span>... welcome to the Secret Vault.`;
-                const letterTitle = document.getElementById("reader-letter-title");
-                if(letterTitle) letterTitle.innerText = `A LETTER TO ${name.toUpperCase()}`;
-                
-                const introScreen = document.getElementById("intro-screen");
-                if(introScreen) introScreen.classList.add("fade-out");
-                
-                if(audioAmbient && !globalState.isAudioPlaying) {
-                    audioAmbient.volume = 0.2;
-                    audioAmbient.play().catch(()=>{});
-                    globalState.isAudioPlaying = true;
-                }
-            });
-        }
-    }
 
     function buildLibrarySystem() {
         const nav = document.getElementById("library-nav"); 
@@ -171,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     svgLines += `<line x1="${p1.left}%" y1="${p1.top}%" x2="${p2.left}%" y2="${p2.top}%" stroke="rgba(191,164,111,0.4)" stroke-width="1" />`;
                 }
             }
-            starMap.innerHTML = `<svg width="100%" height="100%" style="position: absolute;">${svgLines}</svg>${starsHtml}`;
+            starMap.innerHTML = `<svg width="100%" height="100%" style="position: absolute; top:0; left:0; z-index: 1;">${svgLines}</svg>${starsHtml}`;
         }
         if(authorScripting) authorScripting.innerHTML = `<strong>Currently Scripting:</strong> ${UPCOMING_CHAPTER.title}`;
     }
@@ -221,9 +186,32 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /* ======================================================
-       3. GLOBAL CLICK LISTENERS (Save, Share, Audio, Favs)
+       3. GLOBAL CLICK LISTENERS (Gate Open, Save, Share, Audio, Favs)
        ====================================================== */
     document.body.addEventListener('click', (e) => {
+
+        // GLOBAL GATE OPENER (100% Guaranteed tablet/mobile fix)
+        if(e.target.id === 'enter-library-btn') {
+            const inputName = document.getElementById("visitor-name");
+            let name = inputName && inputName.value.trim() !== "" ? inputName.value.trim() : "Wanderer";
+            localStorage.setItem("midnightVisitor", name);
+            globalState.visitorName = name;
+            
+            const greeting = document.getElementById("vault-greeting");
+            if(greeting) greeting.innerHTML = `Ah, <span style="color:var(--gold);">${name}</span>... welcome to the Secret Vault.`;
+            const letterTitle = document.getElementById("reader-letter-title");
+            if(letterTitle) letterTitle.innerText = `A LETTER TO ${name.toUpperCase()}`;
+            
+            const introScreen = document.getElementById("intro-screen");
+            if(introScreen) introScreen.classList.add("fade-out");
+            
+            if(audioAmbient && !globalState.isAudioPlaying) {
+                audioAmbient.volume = 0.2;
+                audioAmbient.play().catch(()=>{});
+                globalState.isAudioPlaying = true;
+            }
+        }
+
         // DOWNLOAD
         if(e.target.classList.contains('download-poem-btn')) {
             const pIdx = e.target.getAttribute('data-poem-index'); if(pIdx === null) return;
@@ -403,12 +391,12 @@ document.addEventListener("DOMContentLoaded", () => {
     function initScrollProgressBar() { window.addEventListener("scroll", () => { let st = window.scrollY || document.documentElement.scrollTop; let sh = document.documentElement.scrollHeight - window.innerHeight; const prog = document.getElementById("reading-progress"); if(prog) prog.style.width = sh > 0 ? ((st / sh) * 100) + "%" : "0%"; }); }
 
     /* ======================================================
-       5. ZEN MODE (Auto-Scroll), ATMOSPHERE & VISUALS
+       5. ZEN MODE (Auto-Scroll Mobile Bug Fixed), ATMOSPHERE & VISUALS
        ====================================================== */
     let zenRAF;
     function smoothZenScroll() {
         if (globalState.zenModeActive) {
-            window.scrollBy(0, 1);
+            window.scrollBy({ top: 1, left: 0, behavior: 'auto' });
             zenRAF = requestAnimationFrame(smoothZenScroll);
         }
     }
@@ -427,16 +415,18 @@ document.addEventListener("DOMContentLoaded", () => {
         function toggleFocus() { document.body.classList.toggle("reading-mode"); focusBtn.innerText = document.body.classList.contains("reading-mode") ? "👁️ Normal" : "📖 Focus"; }
         if(focusBtn) focusBtn.addEventListener("click", toggleFocus); if(exitFocusBtn) exitFocusBtn.addEventListener("click", toggleFocus);
 
-        // ZEN MODE HANDLER RESTORED!
+        // ZEN MODE HANDLER MOBILE FIX
         const zenBtn = document.getElementById("zen-mode-toggle");
         if(zenBtn) {
             zenBtn.addEventListener("click", () => {
                 globalState.zenModeActive = !globalState.zenModeActive;
                 if (globalState.zenModeActive) {
+                    document.documentElement.style.scrollBehavior = 'auto'; // Bypass CSS smooth scroll bug on mobile
                     zenBtn.innerHTML = "🛑 Stop Zen";
                     showToast("📜 Zen Mode: Auto-scroll activated.");
                     zenRAF = requestAnimationFrame(smoothZenScroll);
                 } else {
+                    document.documentElement.style.scrollBehavior = 'smooth'; // Restore original
                     zenBtn.innerHTML = "📜 Zen Mode";
                     cancelAnimationFrame(zenRAF);
                     showToast("🛑 Zen Mode paused.");
