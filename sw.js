@@ -1,24 +1,14 @@
-// 🔴 PWA CACHE KILLER - NO MORE OFFLINE CACHING
-const CACHE_NAME = 'kill-cache-v1';
+const CACHE_NAME = 'creation-dynamic-v1';
 
-// Install hote hi purane system ko dhakka maar do
-self.addEventListener('install', (e) => {
-  self.skipWaiting(); 
-});
+self.addEventListener('install', (e) => { self.skipWaiting(); });
 
-// Activate hote hi saara purana kachra (cache memory) hamesha ke liye DELETE kar do
 self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    caches.keys().then((keyList) => {
-      return Promise.all(keyList.map((key) => {
-        console.log('🗑️ Deleting old cache:', key);
-        return caches.delete(key);
-      }));
-    }).then(() => self.clients.claim())
-  );
+    e.waitUntil(
+        caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k)))).then(() => self.clients.claim())
+    );
 });
 
-// Fetch Event - HAMESHA INTERNET SE NAYA CODE LAO (No caching)
+// Hamesha Live Internet se fetch karega, agar offline hua tabhi cache check karega
 self.addEventListener('fetch', (e) => {
-  e.respondWith(fetch(e.request));
+    e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
 });
