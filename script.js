@@ -538,27 +538,52 @@ document.addEventListener("DOMContentLoaded", () => {
         setInterval(updateDate, 60000); 
     }
 
+        // 🟢 IMAGE DOWNLOADER ENGINE (FIXED FOR SQUISHED TEXT BUG)
     function executeMemoryDownload(element) {
         if (typeof html2canvas === 'undefined') {
             showToast("⏳ Loading camera, please click again...");
             return;
         }
-        html2canvas(element, {
-            useCORS: true,
-            allowTaint: true,
-            backgroundColor: "#151515", 
-            scale: window.devicePixelRatio || 2 
-        }).then(canvas => {
-            const link = document.createElement('a');
-            link.download = `Midnight_Library_Memory_${Date.now()}.png`;
-            link.href = canvas.toDataURL('image/png');
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            showToast("✨ Memory Card saved to storage!");
-        }).catch(err => {
-            console.error("Download failed:", err);
-            showToast("❌ Technical error saving image.");
+
+        // Camera capture karne se pehle element ko fix karna (Anti-Squish)
+        const originalWidth = element.style.width;
+        const targetWidth = element.offsetWidth;
+        element.style.width = targetWidth + "px"; // Force mobile width
+
+        // Ensure karna ki saare custom fonts load ho chuke hain
+        document.fonts.ready.then(() => {
+            html2canvas(element, {
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: "#121212", // Dark background
+                scale: 2, // High resolution (HD Image)
+                width: targetWidth, // Exact wahi width jo screen par hai
+                windowWidth: window.innerWidth,
+                onclone: (documentClone) => {
+                    // Photo ke andar spacing theek karne ke liye
+                    const clonedElement = documentClone.getElementById(element.id);
+                    if(clonedElement) {
+                        clonedElement.style.padding = "30px 20px";
+                        clonedElement.style.margin = "0"; 
+                    }
+                }
+            }).then(canvas => {
+                // UI ko wapas normal kar do
+                element.style.width = originalWidth;
+                
+                const link = document.createElement('a');
+                link.download = `Midnight_Memory_${Date.now()}.png`;
+                link.href = canvas.toDataURL('image/png', 1.0);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                showToast("✨ Memory Card saved to storage!");
+            }).catch(err => {
+                element.style.width = originalWidth; // Error aaye toh bhi normal kar do
+                console.error("Download failed:", err);
+                showToast("❌ Technical error saving image.");
+            });
         });
     }
 
