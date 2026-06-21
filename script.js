@@ -198,9 +198,11 @@ document.addEventListener("DOMContentLoaded", () => {
         showToast("📸 Processing High-Fidelity Snapshot...");
 
         // Smart Desktop Emulator Offscreen Container
+                // Smart Desktop Emulator Offscreen Container
         const monitorEmulationFrame = document.createElement('div');
-        monitorEm Frame = monitorEmulationFrame; 
         monitorEmulationFrame.style.position = 'fixed';
+        monitorEmulationFrame.style.top = '-99999px';
+       
         monitorEmulationFrame.style.top = '-99999px';
         monitorEmulationFrame.style.left = '-99999px';
         monitorEmulationFrame.style.width = '680px'; // Forced desktop rigid limits preventing smartphone text wrapping squish
