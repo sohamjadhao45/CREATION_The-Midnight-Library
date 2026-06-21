@@ -7,18 +7,40 @@ const twStates = new WeakMap();
 
 document.addEventListener("DOMContentLoaded", () => {
     "use strict";
-        // 🟢 PWA SERVICE WORKER REGISTRATION (AUTO-UPDATE MODE)
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js')
-                .then(reg => {
-                    console.log('Service Worker Active: True Offline Mode ON ✈️');
-                    // Yeh line har baar check karegi ki Soham ne naya update dala hai kya!
-                    reg.update(); 
-                })
-                .catch(err => console.error('Service Worker Failed:', err));
-        });
-    }
+               // 🟢 PWA SERVICE WORKER REGISTRATION (SILENT AUTO-UPDATE ENGINE)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => {
+                        console.log('Service Worker Active: True Offline Mode ON ✈️');
+                        
+                        // Background mein check karega ki naya update hai ya nahi
+                        reg.update(); 
+                        
+                        // Agar naya update milta hai, toh use turant install karne ka order
+                        reg.onupdatefound = () => {
+                            const installingWorker = reg.installing;
+                            installingWorker.onstatechange = () => {
+                                if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // Naya update ready hai!
+                                    console.log('New update available! Forcing reload...');
+                                }
+                            };
+                        };
+                    })
+                    .catch(err => console.error('Service Worker Failed:', err));
+            });
+
+            // 🔥 THE MAGIC TRICK: Jaise hi naya service worker active hoga, page apne aap refresh ho jayega!
+            let refreshing = false;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (!refreshing) {
+                    refreshing = true;
+                    window.location.reload(); // Bina user se puche naya code load!
+                }
+            });
+        }
+ 
 
 
     // 🟢 PUSH NOTIFICATION PERMISSION ALARM
