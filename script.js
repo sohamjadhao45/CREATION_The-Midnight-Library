@@ -418,7 +418,7 @@ function createPoemCanvas(poem) {
         }
     }
 
-    function initClockAndAtmosphere() {
+       function initClockAndAtmosphere() {
         const dateEl = document.getElementById("journal-date");
         if(dateEl) dateEl.innerText = `Journal Entry: ${new Date().toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })}`;
         const themeBtn = document.getElementById("theme-toggle");
@@ -438,19 +438,46 @@ function createPoemCanvas(poem) {
             zenBtn.addEventListener("click", () => {
                 globalState.zenModeActive = !globalState.zenModeActive;
                 if (globalState.zenModeActive) {
-                    document.documentElement.style.scrollBehavior = 'auto'; // Bypass CSS smooth scroll bug on mobile
+                    document.documentElement.style.scrollBehavior = 'auto';
                     zenBtn.innerHTML = "🛑 Stop Zen";
                     showToast("📜 Zen Mode: Auto-scroll activated.");
                     zenRAF = requestAnimationFrame(smoothZenScroll);
                 } else {
-                    document.documentElement.style.scrollBehavior = 'smooth'; // Restore original
+                    document.documentElement.style.scrollBehavior = 'smooth';
                     zenBtn.innerHTML = "📜 Zen Mode";
                     cancelAnimationFrame(zenRAF);
                     showToast("🛑 Zen Mode paused.");
                 }
             });
         }
+
+        // DIRECT FIXED: OPEN THE GATES BUTTON CLICK TRIGGER
+        const realEnterBtn = document.getElementById("enter-library-btn");
+        if(realEnterBtn) {
+            realEnterBtn.addEventListener("click", (event) => {
+                event.stopPropagation(); // Ripple effects ko overwrite hone se rokega
+                const inputName = document.getElementById("visitor-name");
+                let name = inputName && inputName.value.trim() !== "" ? inputName.value.trim() : "Wanderer";
+                localStorage.setItem("midnightVisitor", name);
+                globalState.visitorName = name;
+                
+                const greeting = document.getElementById("vault-greeting");
+                if(greeting) greeting.innerHTML = `Ah, <span style="color:var(--gold);">${name}</span>... welcome to the Secret Vault.`;
+                const letterTitle = document.getElementById("reader-letter-title");
+                if(letterTitle) letterTitle.innerText = `A LETTER TO ${name.toUpperCase()}`;
+                
+                const introScreen = document.getElementById("intro-screen");
+                if(introScreen) introScreen.classList.add("fade-out");
+                
+                if(audioAmbient && !globalState.isAudioPlaying) {
+                    audioAmbient.volume = 0.2;
+                    audioAmbient.play().catch(()=>{});
+                    globalState.isAudioPlaying = true;
+                }
+            });
+        }
     }
+ 
 
     function toggleRain() {
         globalState.rainActive = !globalState.rainActive;
