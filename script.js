@@ -1,36 +1,45 @@
-/* =====================================================================
+./* =====================================================================
    THE MIDNIGHT LIBRARY ENGINE (THE HOSTEL FAREWELL EDITION - FIXED)
    Strict JSON Fetch | Zen Mode Mobile Fix | Global Gate Opener
 ===================================================================== */
 
+// === THE MIDNIGHT LIBRARY: GATE OPENING LOGIC ===
 document.addEventListener("DOMContentLoaded", () => {
-    "use strict";
+    const gateBtn = document.getElementById('open-gates-btn');
+    const passportInput = document.getElementById('passport-input');
+    const introScreen = document.getElementById('intro-screen');
+    const pageTurnAudio = document.getElementById('audio-page-turn');
+    const ambientAudio = document.getElementById('audio-ambient');
 
-    let POEM_DATABASE = [];
-    const UPCOMING_CHAPTER = { chapterNum: "IV", title: "THE UNSEEN REALM" };
-    window.twMasterState = {};
-    const globalState = { activeTheme: "dark", isAudioPlaying: false, vortexActive: false, secretClicks: 0, notesVisitCount: 0, secretPassword: "silence", hasTappedMoon: false, hasTypedWord: false, rainActive: false, visitorName: "Wanderer", elevenElevenTriggered: false, zenModeActive: false };
+    if (gateBtn && introScreen) {
+        gateBtn.addEventListener('click', () => {
+            const visitorName = passportInput ? passportInput.value.trim() : "";
 
-    const quoteDatabase = ['"Every silence contains a poem."', '"The moon remembers what we choose to forget."', '"A library is a hospital for the mind."'];
-    const moonWords = ["silence", "poetry", "creation", "memories", "love", "solitude", "eternity"];
-    const midnightThoughts = ["The moon has seen every version of you.", "Not every chapter deserves a sequel.", "Some memories glow brighter after they're gone."];
-    const notesCombos = [
-        ["The hardest goodbyes are the ones that happen quietly.", "Some people become memories before they leave.", "Happiness often arrives disguised as ordinary moments."],
-        ["Words are the shadows of deep hidden emotions.", "The moon remembers everything we choose to forget.", "Time is a silent thief, taking only what we love."]
-    ];
-    const starCoords = [{top: 50, left: 20}, {top: 20, left: 50}, {top: 60, left: 80}, {top: 80, left: 40}, {top: 30, left: 85}, {top: 75, left: 15}];
+            // Agar user ne bina naam likhe click kiya toh alert dega
+            if (visitorName === "") {
+                alert("Please enter your name, traveler.");
+                return;
+            }
 
-    const audioPageTurn = document.getElementById("audio-page-turn");
-    const audioRain = document.getElementById("audio-rain");
-    const audioAmbient = document.getElementById("audio-ambient");
+            // 1. Audio play karo (agar background block na ho)
+            if (pageTurnAudio) pageTurnAudio.play().catch(e => console.log("Audio block:", e));
+            if (ambientAudio) ambientAudio.play().catch(e => console.log("Ambient block:", e));
 
-    // Core Init Framework Calls
-    const coreEngines = [
-        initClockAndAtmosphere, initUltimateUniverseBackground, initCosmicNavigation, 
-        initScrollProgressBar, initLedger, initDynamicShadows, initBookmarksDrawer, 
-        initFavouritesDrawer, initTimeCapsule, initTouchRipple, init1111Wish, initAuthorsDesk
-    ];
-    coreEngines.forEach(engine => { try { engine(); } catch (e) { console.error("Engine Blocked:", engine.name, e); } });
+            // 2. Intro screen par fade-out class lagao jo CSS mein bani hai
+            introScreen.classList.add('fade-out');
+
+            // 3. Kuch devices ke liye backup visibility fix
+            setTimeout(() => {
+                introScreen.style.display = 'none';
+            }, 1000);
+
+            console.log("Welcome to the Vault, " + visitorName);
+        });
+    } else {
+        console.error("Gate elements not found! Check your HTML IDs.");
+    }
+});
+
 
     /* ======================================================
        1. STRICT JSON FETCHING (No hardcoded Fallbacks)
