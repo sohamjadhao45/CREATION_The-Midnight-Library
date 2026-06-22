@@ -17,9 +17,7 @@
   <audio id="audio-ambient" src="https://assets.mixkit.co/active_storage/sfx/2458/2458-preview.mp3" loop preload="auto"></audio>
 
   <div id="reading-progress"></div>
-
   <canvas id="rain-canvas"></canvas>
-
   <div id="toast-container"></div>
   <button id="exit-focus-btn" class="exit-focus-btn" title="Exit Focus Mode">⨉ Exit Focus</button>
 
@@ -85,17 +83,13 @@
             <span class="intro-highlight">Enter the secret code to proceed.</span>
         </p>
         
-        <input type="text" id="passport-input" class="passport-input" placeholder="Enter Passport Key...">
+        <input type="text" id="passport-input" class="passport-input" placeholder="Your name Please ?...">
         
         <div class="button-row">
             <button id="open-gates-btn" class="btn-solid">OPEN THE GATES</button>
         </div>
     </div>
-</div>
-
-<div id="main-library">
-    </div>
-
+  </div>
 
   <canvas id="universe"></canvas>
 
@@ -104,6 +98,8 @@
       <span class="journal-date" id="journal-date">Journal Entry: Loading...</span>
       <span class="header-divider">|</span>
       <span class="moon-phase interactive-moon" id="moon-phase" title="Click me 3 times...">🌙 Waxing Gibbous</span>
+      <span class="header-divider">|</span>
+      <span id="admin-trigger" style="cursor: pointer; opacity: 0.4; font-size: 12px;" title="Author Sanctum">⚙️</span>
     </div>
     <div class="header-right">
       <button id="open-fav-btn" class="btn-icon" title="View Favourites">❤️ Favourites</button>
@@ -147,7 +143,6 @@
       <p class="poem-subtitle" style="margin-bottom: 20px;">THE QUIETEST ROOM IN THE LIBRARY</p>
       
       <div class="poetry-box antique-parchment dynamic-shadow vault-parchment">
-        
         <p id="vault-greeting" class="poem-playfair" style="font-size: 19px; color: var(--gold); border-bottom: 1px dashed var(--parchment-border); padding-bottom: 10px; margin-bottom: 15px;">
            Welcome to the Secret Vault.
         </p>
