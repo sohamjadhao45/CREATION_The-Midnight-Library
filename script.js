@@ -3,18 +3,6 @@
    Strict JSON Fetch | Zen Mode Mobile Fix | Global Gate Opener
 ===================================================================== */
 
-// 🔴 FIX 2: Commented out the Aggressive Live Network Injector. 
-// (Isse production website mein memory save hogi aur offline caching kaam karegi)
-/*
-if ('serviceWorker' in navigator) { 
-    navigator.serviceWorker.getRegistrations().then(function(registrations) { 
-        for(let registration of registrations) { 
-            registration.unregister(); 
-        } 
-    });
-}
-*/
-
 document.addEventListener("DOMContentLoaded", () => {
     "use strict";
 
@@ -36,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const audioRain = document.getElementById("audio-rain");
     const audioAmbient = document.getElementById("audio-ambient");
 
-    // Core Init Framework Calls - Isolated so one error doesn't break the whole app
+    // Core Init Framework Calls
     const coreEngines = [
         initClockAndAtmosphere, initUltimateUniverseBackground, initCosmicNavigation, 
         initScrollProgressBar, initLedger, initDynamicShadows, initBookmarksDrawer, 
@@ -147,63 +135,38 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /* ======================================================
-       2. CANVAS HD DRAWING (HQ Share & Save - No Squish)
+       2. CANVAS HD DRAWING (HQ Share & Save)
     ====================================================== */
     function createPoemCanvas(poem) {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
-        canvas.width = 1080;
-        canvas.height = 1920;
-
-        ctx.fillStyle = globalState.activeTheme === "dark" ? "#0b0b0f" : "#e8dcc7";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        ctx.strokeStyle = "#bfa46f";
-        ctx.lineWidth = 4;
-
-        // FIX 3: Adjusted width and height by subtracting 100 to keep a perfect 50px border on all sides.
-        ctx.strokeRect(50, 50, canvas.width - 100, canvas.height - 100);
-
-        ctx.fillStyle = "#bfa46f"; ctx.textAlign = "center"; 
-        ctx.font = "bold 60px Cinzel, serif"; 
-        ctx.fillText("THE MIDNIGHT LIBRARY", canvas.width / 2, 180);
-        
-        ctx.font = "30px Urbanist, sans-serif"; 
-        ctx.fillText("✦  ✦  ✦", canvas.width / 2, 240);
-        
-        ctx.font = "bold 80px Cinzel, serif"; 
-        ctx.fillText(poem.title.replace(/<br>/g, ' '), canvas.width / 2, 400);
-        
-        ctx.font = "35px Cinzel, serif"; 
-        ctx.fillStyle = globalState.activeTheme === "dark" ? "rgba(242,238,233,0.6)" : "rgba(59,34,16,0.6)"; 
-        ctx.fillText(poem.subtitle, canvas.width / 2, 460);
-        
-        ctx.fillStyle = globalState.activeTheme === "dark" ? "#f2eee9" : "#3B2210"; 
-        ctx.font = "40px Playfair Display, serif";
-        
-        let y = 600; 
-        const lines = poem.text.replace(/\\n/g, '\n').split('\n');
-        lines.forEach(line => { 
-            if(line === "") { y += 40; } else { ctx.fillText(line.trim(), canvas.width / 2, y); y += 60; } 
-        });
-        
-        ctx.fillStyle = "#bfa46f"; 
-        ctx.font = "italic 60px Great Vibes, cursive"; 
-        ctx.fillText(poem.signature.replace(/<br>/g, ' '), canvas.width / 2, canvas.height - 200);
-        
+        canvas.width = 1080; canvas.height = 1920;
+        ctx.fillStyle = globalState.activeTheme === "dark" ? "#0b0b0f" : "#e8dcc7"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = "#bfa46f"; ctx.lineWidth = 4; ctx.strokeRect(50, 50, canvas.width - 100, canvas.height - 100);
+        ctx.fillStyle = "#bfa46f"; ctx.textAlign = "center"; ctx.font = "bold 60px Cinzel, serif"; ctx.fillText("THE MIDNIGHT LIBRARY", canvas.width / 2, 180);
+        ctx.font = "30px Urbanist, sans-serif"; ctx.fillText("✦  ✦  ✦", canvas.width / 2, 240);
+        ctx.font = "bold 80px Cinzel, serif"; ctx.fillText(poem.title.replace(/<br>/g, ' '), canvas.width / 2, 400);
+        ctx.font = "35px Cinzel, serif"; ctx.fillStyle = globalState.activeTheme === "dark" ? "rgba(242,238,233,0.6)" : "rgba(59,34,16,0.6)"; ctx.fillText(poem.subtitle, canvas.width / 2, 460);
+        ctx.fillStyle = globalState.activeTheme === "dark" ? "#f2eee9" : "#3B2210"; ctx.font = "40px Playfair Display, serif";
+        let y = 600; const lines = poem.text.replace(/\\n/g, '\n').split('\n');
+        lines.forEach(line => { if(line === "") { y += 40; } else { ctx.fillText(line.trim(), canvas.width / 2, y); y += 60; } });
+        ctx.fillStyle = "#bfa46f"; ctx.font = "italic 60px Great Vibes, cursive"; ctx.fillText(poem.signature.replace(/<br>/g, ' '), canvas.width / 2, canvas.height - 200);
         return canvas;
     }
 
     /* ======================================================
-       3. GLOBAL CLICK LISTENERS (Gate Open, Save, Share, Audio, Favs)
+       3. GLOBAL CLICK LISTENERS (Gate Open, Save, Share, Audio)
        ====================================================== */
     document.body.addEventListener('click', (e) => {
 
-        // GLOBAL GATE OPENER (100% Guaranteed fix with display:none)
-        if(e.target.id === 'enter-library-btn') {
-            const inputName = document.getElementById("visitor-name");
+        // FOOLPROOF GATE OPENER MERGED WITH SCOPE VARIABLES
+        if(e.target.id === 'open-gates-btn') {
+            e.preventDefault();
+            const inputName = document.getElementById("passport-input");
             let name = inputName && inputName.value.trim() !== "" ? inputName.value.trim() : "Wanderer";
+            
             localStorage.setItem("midnightVisitor", name);
+            localStorage.setItem("gatesOpened", "true");
             globalState.visitorName = name;
             
             const greeting = document.getElementById("vault-greeting");
@@ -213,12 +176,7 @@ document.addEventListener("DOMContentLoaded", () => {
             
             const introScreen = document.getElementById("intro-screen");
             if(introScreen) {
-                // Smoothly fade out and then completely remove it from blocking the layout
-                introScreen.style.transition = "opacity 0.8s ease";
-                introScreen.style.opacity = "0";
-                setTimeout(() => {
-                    introScreen.style.display = "none";
-                }, 800);
+                introScreen.classList.add("fade-out");
             }
             
             if(audioAmbient && !globalState.isAudioPlaying) {
@@ -228,6 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             
             showToast("🏛️ Welcome, " + name);
+            console.log("Gate open button processed safely inside scope!");
         }
 
         // DOWNLOAD
@@ -240,23 +199,21 @@ document.addEventListener("DOMContentLoaded", () => {
         // SHARE
         if(e.target.classList.contains('share-poem-btn')) {
             const pIdx = e.target.getAttribute('data-poem-index'); if(pIdx === null) return;
-            const poem = POEM_DATABASE[pIdx];
-            showToast("🔗 Generating verse card...");
+            const poem = POEM_DATABASE[pIdx]; showToast("🔗 Generating verse card...");
             const canvas = createPoemCanvas(poem);
             canvas.toBlob((blob) => {
                 if (!blob) return; const file = new File([blob], `Midnight_Verse.png`, { type: 'image/png' });
                 if (navigator.canShare && navigator.canShare({ files: [file] })) {
                     navigator.share({ files: [file], title: poem.title.replace(/<br>/g, ' '), text: `A whisper from Soham's sanctuary... 🌙` }).then(() => showToast("✨ Shared successfully!")).catch(()=>{});
                 } else {
-                    const fallbackText = `📖 *${poem.title.replace(/<br>/g, ' ')}*\n\n"${poem.text.replace(/\\n/g, '\n')}"\n\nRead more at The Midnight Library: ${window.location.href}`;
+                    const fallbackText = `📖 *${poem.title.replace(/<br>/g, ' ')}*\n\n"${poem.text.replace(/\\n/g, '\n')}"\n\nRead more: ${window.location.href}`;
                     navigator.share({ title: poem.title.replace(/<br>/g, ' '), text: fallbackText }).catch(() => { navigator.clipboard.writeText(fallbackText); showToast("🔗 Link copied to clipboard!"); });
                 }
             }, 'image/png');
         }
         // AUDIO NARRATOR
         if(e.target.classList.contains('listen-btn')) {
-            const btn = e.target;
-            if (window.speechSynthesis.speaking) { window.speechSynthesis.cancel(); btn.innerHTML = "🎙️ LISTEN TO THE POEM"; showToast("🛑 Narration stopped."); return; }
+            const btn = e.target; if (window.speechSynthesis.speaking) { window.speechSynthesis.cancel(); btn.innerHTML = "🎙️ LISTEN TO THE POEM"; showToast("🛑 Narration stopped."); return; }
             const page = btn.closest('.page'); const poemTextEl = page ? page.querySelector('.typewriter-poem') : null; if(!poemTextEl) return;
             let text = poemTextEl.innerText.replace(/🪶/g, ''); 
             let utterance = new SpeechSynthesisUtterance(text); utterance.rate = 0.85; utterance.pitch = 0.9; window.speechSynthesis.speak(utterance);
@@ -280,8 +237,8 @@ document.addEventListener("DOMContentLoaded", () => {
     function updateSavedDrawers() {
         const favList = document.getElementById("favourites-list"); const archList = document.getElementById("bookmarks-list");
         let favs = JSON.parse(localStorage.getItem('midnightFavs') || '[]'); let bookmarks = JSON.parse(localStorage.getItem('midnightBookmarks') || '[]');
-        if (favList) { favList.innerHTML = favs.length === 0 ? `<p style="opacity: 0.5; font-style: italic;">No verses have resonated with you yet...</p>` : favs.map(fv => `<div class="bookmark-item" data-title="${fv}">❤️ ${fv}</div>`).join(''); }
-        if (archList) { archList.innerHTML = bookmarks.length === 0 ? `<p style="opacity: 0.5; font-style: italic;">Your soul hasn't saved any verses yet...</p>` : bookmarks.map(bm => `<div class="bookmark-item" data-title="${bm}">📖 ${bm}</div>`).join(''); }
+        if (favList) { favList.innerHTML = favs.length === 0 ? `<p style="opacity: 0.5; font-style: italic;">No verses resonated yet...</p>` : favs.map(fv => `<div class="bookmark-item" data-title="${fv}">❤️ ${fv}</div>`).join(''); }
+        if (archList) { archList.innerHTML = bookmarks.length === 0 ? `<p style="opacity: 0.5; font-style: italic;">No verses saved yet...</p>` : bookmarks.map(bm => `<div class="bookmark-item" data-title="${bm}">📖 ${bm}</div>`).join(''); }
         document.querySelectorAll('.bookmark-item[data-title]').forEach(item => {
             item.addEventListener('click', (e) => {
                 const targetTitle = e.target.getAttribute('data-title');
@@ -316,13 +273,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function executePageFlip(targetPageId) {
-        const currentActivePage = document.querySelector(".page.active"); 
-        const destinationPage = document.getElementById(targetPageId);
+        const currentActivePage = document.querySelector(".page.active"); const destinationPage = document.getElementById(targetPageId);
         if(!destinationPage || currentActivePage === destinationPage) return;
-
-        globalState.vortexActive = true; 
-        document.body.style.overflowY = 'hidden';
-
+        globalState.vortexActive = true; document.body.style.overflowY = 'hidden';
         if(targetPageId === "page-fragments") {
             const currentCombo = notesCombos[globalState.notesVisitCount % notesCombos.length];
             const q1 = document.getElementById("combo-quote-1"); if(q1) q1.innerText = currentCombo[0];
@@ -330,27 +283,19 @@ document.addEventListener("DOMContentLoaded", () => {
             const q3 = document.getElementById("combo-quote-3"); if(q3) q3.innerText = currentCombo[2];
             globalState.notesVisitCount++;
         }
-
         if(currentActivePage) {
-            currentActivePage.classList.remove("active");
-            destinationPage.classList.add("active");
-            window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-            globalState.vortexActive = false; 
-            document.body.style.overflowY = 'auto';
+            currentActivePage.classList.remove("active"); destinationPage.classList.add("active");
+            window.scrollTo({ top: 0, left: 0, behavior: 'instant' }); globalState.vortexActive = false; document.body.style.overflowY = 'auto';
             bindWaxSeals(destinationPage);
-        } else { 
-            destinationPage.classList.add("active"); 
-            initTypewriterEngine(); 
-        }
+        } else { destinationPage.classList.add("active"); initTypewriterEngine(); }
         document.querySelectorAll(".nav-link").forEach(lnk => { lnk.classList.toggle("active-nav", lnk.getAttribute("data-target") === targetPageId); });
     }
 
     function bindWaxSeals(page) {
-        const sealWrap = page.querySelector(".wax-seal-wrapper:not(.broken)");
-        if (!sealWrap) { initTypewriterEngine(); return; }
+        const sealWrap = page.querySelector(".wax-seal-wrapper:not(.broken)"); if (!sealWrap) { initTypewriterEngine(); return; }
         if (sealWrap.dataset.isBroken === "true") { sealWrap.classList.add("broken"); initTypewriterEngine(); return; }
         const sealBtn = sealWrap.querySelector(".wax-seal"); showToast("👆 Click the wax seal to break it...");
-        sealBtn.addEventListener('click', (e) => { sealWrap.dataset.isBroken = "true"; sealWrap.classList.add("broken"); showToast("🔓 The seal is broken."); setTimeout(initTypewriterEngine, 800); });
+        sealBtn.addEventListener('click', () => { sealWrap.dataset.isBroken = "true"; sealWrap.classList.add("broken"); showToast("🔓 The seal is broken."); setTimeout(initTypewriterEngine, 800); });
     }
 
     function applyWhispers(el, poemIndex) {
@@ -362,16 +307,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function initTypewriterEngine() {
         const activePage = document.querySelector(".page.active"); if (!activePage) return;
-        const poemIndex = activePage.getAttribute("data-poem-index");
-        const poemEls = activePage.querySelectorAll(".typewriter-poem");
+        const poemIndex = activePage.getAttribute("data-poem-index"); const poemEls = activePage.querySelectorAll(".typewriter-poem");
         poemEls.forEach((el, index) => {
             const text = el.getAttribute("data-lines"); if (!text) return;
             const lines = text.replace(/\\n/g, '\n').split('\n'); const signEl = activePage.querySelector(".sign-animate"); const poemId = activePage.id + "-" + index;
             if (!window.twMasterState[poemId]) { window.twMasterState[poemId] = { lineIndex: 0, charIndex: 0, outHtml: "", status: "unstarted" }; el.innerHTML = ""; }
             let state = window.twMasterState[poemId];
             if (state.status === "finished" || el.getAttribute("data-animated") === "true") { if(signEl) { signEl.classList.add("show-instantly"); } if(poemIndex !== null) applyWhispers(el, poemIndex); return; }
-            if (state.status === "typing") return; 
-            state.status = "typing"; el.classList.add("is-typing");
+            if (state.status === "typing") return; state.status = "typing"; el.classList.add("is-typing");
             function typeNext() {
                 if (!activePage.classList.contains("active")) { state.status = "paused"; el.classList.remove("is-typing"); return; }
                 if (state.lineIndex < lines.length) {
@@ -387,19 +330,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function initLedger() {
-        const ledgerList = document.getElementById("ledger-list"); 
-        const submits = document.querySelectorAll(".ledger-submit"); 
-        const inputs = document.querySelectorAll(".ledger-input");
+        const ledgerList = document.getElementById("ledger-list"); const submits = document.querySelectorAll(".ledger-submit"); const inputs = document.querySelectorAll(".ledger-input");
         let entries = JSON.parse(localStorage.getItem('midnightLedger') || '[]');
-        function renderLedger() { if(!ledgerList) return; ledgerList.innerHTML = entries.length === 0 ? `<p style="opacity:0.5;">No wandering souls recorded yet...</p>` : entries.map(e => `<p style="margin-bottom:6px;">"${e.text}" <span style="font-size:10px; opacity:0.4;">— ${e.date}</span></p>`).join(''); }
+        function renderLedger() { if(!ledgerList) return; ledgerList.innerHTML = entries.length === 0 ? `<p style="opacity:0.5;">No wandering souls recorded...</p>` : entries.map(e => `<p style="margin-bottom:6px;">"${e.text}" <span style="font-size:10px; opacity:0.4;">— ${e.date}</span></p>`).join(''); }
         renderLedger();
         submits.forEach((btn, idx) => { btn.addEventListener("click", () => { const input = inputs[idx]; if(input && input.value.trim() !== "") { entries.unshift({ text: input.value.trim(), date: new Date().toLocaleDateString() }); localStorage.setItem('midnightLedger', JSON.stringify(entries)); input.value = ""; renderLedger(); } }); });
     }
 
     function init1111Wish() {
-        const modal = document.getElementById("wish-modal");
-        const submitBtn = document.getElementById("submit-wish-btn");
-        const input = document.getElementById("wish-input");
+        const modal = document.getElementById("wish-modal"); const submitBtn = document.getElementById("submit-wish-btn"); const input = document.getElementById("wish-input");
         setInterval(() => { const d = new Date(); if (d.getHours() === 23 && d.getMinutes() === 11 && !globalState.elevenElevenTriggered) { globalState.elevenElevenTriggered = true; if(modal) modal.style.display = "flex"; } }, 15000);
         if(submitBtn) { submitBtn.addEventListener("click", () => { if(input?.value.trim() !== "") { modal.style.display = "none"; showToast("✨ Wish sent to the cosmos."); } }); }
     }
@@ -411,33 +350,18 @@ document.addEventListener("DOMContentLoaded", () => {
     /* ======================================================
        5. ZEN MODE & ATMOSPHERE & VISUALS
        ====================================================== */
-    let zenRAF;
-    function smoothZenScroll() {
-        if (globalState.zenModeActive) {
-            let currentY = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop;
-            window.scrollTo(0, currentY + 1);
-            zenRAF = requestAnimationFrame(smoothZenScroll);
-        }
-    } // FIXED: This missing bracket was breaking everything!
-
     function initClockAndAtmosphere() {
-        const dateEl = document.getElementById("journal-date");
-        if(dateEl) dateEl.innerText = `Journal Entry: ${new Date().toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })}`;
+        const dateEl = document.getElementById("journal-date"); if(dateEl) dateEl.innerText = `Journal Entry: ${new Date().toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })}`;
         const themeBtn = document.getElementById("theme-toggle");
         if(themeBtn) { themeBtn.addEventListener("click", () => { const nextTheme = globalState.activeTheme === "dark" ? "light" : "dark"; document.documentElement.setAttribute("data-theme", nextTheme); themeBtn.innerText = nextTheme === "dark" ? "🌙 Night" : "☀️ Day"; globalState.activeTheme = nextTheme; }); }
-        
-        const rainToggleBtn = document.getElementById("rain-toggle");
-        if(rainToggleBtn) rainToggleBtn.addEventListener("click", toggleRain);
-        
-        const focusBtn = document.getElementById("reading-mode-toggle");
-        const exitFocusBtn = document.getElementById("exit-focus-btn");
+        const rainToggleBtn = document.getElementById("rain-toggle"); if(rainToggleBtn) rainToggleBtn.addEventListener("click", toggleRain);
+        const focusBtn = document.getElementById("reading-mode-toggle"); const exitFocusBtn = document.getElementById("exit-focus-btn");
         function toggleFocus() { document.body.classList.toggle("reading-mode"); focusBtn.innerText = document.body.classList.contains("reading-mode") ? "👁️ Normal" : "📖 Focus"; }
         if(focusBtn) focusBtn.addEventListener("click", toggleFocus); if(exitFocusBtn) exitFocusBtn.addEventListener("click", toggleFocus);
     }
 
     function toggleRain() {
-        globalState.rainActive = !globalState.rainActive;
-        const rCanvas = document.getElementById("rain-canvas");
+        globalState.rainActive = !globalState.rainActive; const rCanvas = document.getElementById("rain-canvas");
         if(globalState.rainActive) { rCanvas?.classList.add("raining"); startRainVisuals(); showToast("🌧️ Storm simulation active..."); if(audioRain) { audioRain.volume = 0.4; audioRain.play(); } }
         else { rCanvas?.classList.remove("raining"); showToast("🌤️ Storm cleared."); if(audioRain) { audioRain.pause(); } }
     }
@@ -445,23 +369,14 @@ document.addEventListener("DOMContentLoaded", () => {
     function startRainVisuals() {
         const rCanvas = document.getElementById("rain-canvas"); if(!rCanvas) return; const rCtx = rCanvas.getContext("2d"); rCanvas.width = window.innerWidth; rCanvas.height = window.innerHeight;
         const drops = []; for(let i=0; i<80; i++) drops.push({x: Math.random()*rCanvas.width, y: Math.random()*rCanvas.height, l: Math.random()*20+10, v: Math.random()*4+5});
-        function drawRain() {
-            if(!globalState.rainActive) return; rCtx.clearRect(0,0,rCanvas.width,rCanvas.height); rCtx.strokeStyle = "rgba(191,164,111,0.25)"; rCtx.lineWidth = 1; rCtx.beginPath();
-            for(let i=0; i<drops.length; i++) { let d = drops[i]; rCtx.moveTo(d.x, d.y); rCtx.lineTo(d.x, d.y+d.l); d.y += d.v; if(d.y > rCanvas.height) { d.y = -20; d.x = Math.random()*rCanvas.width; } }
-            rCtx.stroke(); requestAnimationFrame(drawRain);
-        }
+        function drawRain() { if(!globalState.rainActive) return; rCtx.clearRect(0,0,rCanvas.width,rCanvas.height); rCtx.strokeStyle = "rgba(191,164,111,0.25)"; rCtx.lineWidth = 1; rCtx.beginPath(); for(let i=0; i<drops.length; i++) { let d = drops[i]; rCtx.moveTo(d.x, d.y); rCtx.lineTo(d.x, d.y+d.l); d.y += d.v; if(d.y > rCanvas.height) { d.y = -20; d.x = Math.random()*rCanvas.width; } } rCtx.stroke(); requestAnimationFrame(drawRain); }
         drawRain();
     }
 
     function initUltimateUniverseBackground() {
         const canvas = document.getElementById("universe"); if(!canvas) return; const ctx = canvas.getContext("2d", { alpha: false }); let width = canvas.width = window.innerWidth; let height = canvas.height = window.innerHeight; window.addEventListener("resize", () => { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; });
-        const backgroundStars = []; 
-        for(let i = 0; i < 45; i++) backgroundStars.push({ x: Math.random() * width, y: Math.random() * height, radius: Math.random() * 1.2 + 0.2, baseAlpha: Math.random() * 0.4 + 0.2, phase: Math.random() * Math.PI });
-        function processRenderLoop() {
-            ctx.fillStyle = globalState.activeTheme === "dark" ? "#050507" : "#f4ebd0"; ctx.fillRect(0, 0, width, height);
-            for(let star of backgroundStars) { star.phase += 0.015; let a = star.baseAlpha + Math.sin(star.phase) * 0.15; ctx.beginPath(); ctx.fillStyle = globalState.activeTheme === "dark" ? `rgba(242,238,233,${Math.max(0.1, a)})` : `rgba(28, 22, 12,${Math.max(0.1, a)})`; ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2); ctx.fill(); }
-            requestAnimationFrame(processRenderLoop);
-        }
+        const backgroundStars = []; for(let i = 0; i < 45; i++) backgroundStars.push({ x: Math.random() * width, y: Math.random() * height, radius: Math.random() * 1.2 + 0.2, baseAlpha: Math.random() * 0.4 + 0.2, phase: Math.random() * Math.PI });
+        function processRenderLoop() { ctx.fillStyle = globalState.activeTheme === "dark" ? "#050507" : "#f4ebd0"; ctx.fillRect(0, 0, width, height); for(let star of backgroundStars) { star.phase += 0.015; let a = star.baseAlpha + Math.sin(star.phase) * 0.15; ctx.beginPath(); ctx.fillStyle = globalState.activeTheme === "dark" ? `rgba(242,238,233,${Math.max(0.1, a)})` : `rgba(28, 22, 12,${Math.max(0.1, a)})`; ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2); ctx.fill(); } requestAnimationFrame(processRenderLoop); }
         requestAnimationFrame(processRenderLoop);
     }
 
@@ -469,51 +384,17 @@ document.addEventListener("DOMContentLoaded", () => {
        6. THE AUTHOR'S DESK (Admin Portal Control)
        ====================================================== */
     function initAuthorsDesk() {
-        const trigger = document.getElementById('secret-admin-trigger');
-        const modal = document.getElementById('admin-modal');
-        const loginSection = document.getElementById('admin-auth-section');
-        const formSection = document.getElementById('admin-form-section');
-        const passInput = document.getElementById('admin-pass-input');
-        const loginBtn = document.getElementById('btn-admin-login');
-        const genBtn = document.getElementById('btn-generate-json');
-        const closeBtn = document.getElementById('btn-close-admin');
-
-        if(!trigger || !modal) return; 
-        trigger.addEventListener('click', () => { modal.style.display = 'flex'; if(passInput) passInput.value = ""; loginSection.style.display = 'block'; formSection.style.display = 'none'; });
-        
-        if(loginBtn) {
-            loginBtn.addEventListener('click', () => {
-                if(passInput && passInput.value === "soham123") {
-                    showToast("🔓 Access Granted.");
-                    loginSection.style.display = 'none';
-                    formSection.style.display = 'block';
-                    const targetDateNode = document.getElementById('ap-date'); if(targetDateNode) targetDateNode.value = new Date().toLocaleDateString();
-                    const targetSignNode = document.getElementById('ap-sign'); if(targetSignNode) targetSignNode.value = "-- Soham Jadhao";
-                } else { showToast("❌ Invalid Key."); }
-            });
-        }
-        if(genBtn) {
-            genBtn.addEventListener('click', () => {
-                const ch = document.getElementById('ap-chapter')?.value.trim();
-                const ttl = document.getElementById('ap-title')?.value.trim();
-                const txt = document.getElementById('ap-text')?.value.trim();
-                if(!ch || !ttl || !txt) { showToast("⚠️ Missing parameters."); return; }
-                const jsonObject = { chapterLabel: ch, spineLabel: ttl, title: ttl, subtitle: "A REFLECTION", themeTag: "Motivation", text: txt.replace(/\n/g, '\\n'), dateText: new Date().toLocaleDateString(), signature: "-- Soham" };
-                navigator.clipboard.writeText("," + JSON.stringify(jsonObject, null, 2)).then(() => { alert("✨ Poem Copied!"); modal.style.display = 'none'; });
-            });
-        }
+        const trigger = document.getElementById('secret-admin-trigger'); const modal = document.getElementById('admin-modal'); const loginSection = document.getElementById('admin-auth-section'); const formSection = document.getElementById('admin-form-section'); const passInput = document.getElementById('admin-pass-input'); const loginBtn = document.getElementById('btn-admin-login'); const genBtn = document.getElementById('btn-generate-json'); const closeBtn = document.getElementById('btn-close-admin');
+        if(!trigger || !modal) return; trigger.addEventListener('click', () => { modal.style.display = 'flex'; if(passInput) passInput.value = ""; loginSection.style.display = 'block'; formSection.style.display = 'none'; });
+        if(loginBtn) { loginBtn.addEventListener('click', () => { if(passInput && passInput.value === "soham123") { showToast("🔓 Access Granted."); loginSection.style.display = 'none'; formSection.style.display = 'block'; const dNode = document.getElementById('ap-date'); if(dNode) dNode.value = new Date().toLocaleDateString(); const sNode = document.getElementById('ap-sign'); if(sNode) sNode.value = "-- Soham Jadhao"; } else { showToast("❌ Invalid Key."); } }); }
+        if(genBtn) { genBtn.addEventListener('click', () => { const ch = document.getElementById('ap-chapter')?.value.trim(); const ttl = document.getElementById('ap-title')?.value.trim(); const txt = document.getElementById('ap-text')?.value.trim(); if(!ch || !ttl || !txt) { showToast("⚠️ Missing parameters."); return; } const jsonObject = { chapterLabel: ch, spineLabel: ttl, title: ttl, subtitle: "A REFLECTION", themeTag: "Motivation", text: txt.replace(/\n/g, '\\n'), dateText: new Date().toLocaleDateString(), signature: "-- Soham" }; navigator.clipboard.writeText("," + JSON.stringify(jsonObject, null, 2)).then(() => { alert("✨ Poem Copied!"); modal.style.display = 'none'; }); }); }
         if(closeBtn) closeBtn.addEventListener('click', () => { modal.style.display = 'none'; });
     }
 
     function initLibraryFeatures() {
         const footerQuote = document.getElementById("quote-rotator"); if(footerQuote) footerQuote.innerText = quoteDatabase[Math.floor(Math.random() * quoteDatabase.length)];
         const moonTrigger = document.getElementById("moon-phase");
-        if(moonTrigger) {
-            moonTrigger.addEventListener("click", () => {
-                globalState.secretClicks++; 
-                if(globalState.secretClicks === 3) { globalState.hasTappedMoon = true; showToast("🏆 Achievement Unlocked: Moonwalker"); document.querySelector(".trigger-nav[data-target='page-secret']")?.click() || document.getElementById('page-secret')?.classList.add('active'); globalState.secretClicks = 0; }
-            });
-        }
+        if(moonTrigger) { moonTrigger.addEventListener("click", () => { globalState.secretClicks++; if(globalState.secretClicks === 3) { globalState.hasTappedMoon = true; showToast("🏆 Achievement Unlocked: Moonwalker"); document.querySelector(".trigger-nav[data-target='page-secret']")?.click() || document.getElementById('page-secret')?.classList.add('active'); globalState.secretClicks = 0; } }); }
         const thoughtBtn = document.getElementById("reveal-thought-btn"); const thoughtDisplay = document.getElementById("midnight-thought-display");
         if(thoughtBtn && thoughtDisplay) { thoughtBtn.addEventListener("click", () => { thoughtDisplay.style.opacity = 0; setTimeout(() => { thoughtDisplay.innerText = `"${midnightThoughts[Math.floor(Math.random() * midnightThoughts.length)]}"`; thoughtDisplay.style.opacity = 0.8; }, 300); }); }
     }
@@ -523,70 +404,17 @@ document.addEventListener("DOMContentLoaded", () => {
         window.addEventListener("keydown", (e) => {
             if (e.key.length === 1 && e.key.match(/[a-z]/i)) inputBuffer += e.key.toLowerCase();
             if (inputBuffer.length > 7) inputBuffer = inputBuffer.substring(inputBuffer.length - 7);
-            if (inputBuffer === "silence") {
-                showToast("👁️ Secret Room Access Initialized...");
-                document.querySelector(".trigger-nav[data-target='page-secret']")?.click();
-                inputBuffer = "";
-            }
+            if (inputBuffer === "silence") { showToast("👁️ Secret Room Access Initialized..."); document.querySelector(".trigger-nav[data-target='page-secret']")?.click(); inputBuffer = ""; }
         });
     }
 
     function showToast(msg) { const container = document.getElementById("toast-container"); if(!container) return; const toast = document.createElement("div"); toast.className = "toast"; toast.innerText = msg; container.appendChild(toast); setTimeout(() => toast.remove(), 3500);}
     
     /* ======================================================
-       7. PWA INSTALLATION SYSTEM & LIFECYCLE
+       7. PWA INSTALLATION SYSTEM
        ====================================================== */
-    let deferredPrompt;
-    const installBtn = document.getElementById("btn-install-app");
-
-    window.addEventListener("beforeinstallprompt", (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        if (installBtn) {
-            installBtn.style.display = "block";
-        }
-    });
-
-    if (installBtn) {
-        installBtn.addEventListener("click", async () => {
-            if (!deferredPrompt) return;
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === "accepted") {
-                showToast("✨ Sanctuary installed successfully!");
-            }
-            deferredPrompt = null;
-            installBtn.style.display = "none";
-        });
-    }
-
-    window.addEventListener("appinstalled", () => {
-        if (installBtn) installBtn.style.display = "none";
-        deferredPrompt = null;
-        showToast("🏛️ Welcome to the permanent library.");
-    });
+    let deferredPrompt; const installBtn = document.getElementById("btn-install-app");
+    window.addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); deferredPrompt = e; if (installBtn) installBtn.style.display = "block"; });
+    if (installBtn) { installBtn.addEventListener("click", async () => { if (!deferredPrompt) return; deferredPrompt.prompt(); const { outcome } = await deferredPrompt.userChoice; if (outcome === "accepted") showToast("✨ Sanctuary installed successfully!"); deferredPrompt = null; installBtn.style.display = "none"; }); }
+    window.addEventListener("appinstalled", () => { if (installBtn) installBtn.style.display = "none"; deferredPrompt = null; showToast("🏛️ Welcome to the permanent library."); });
 });
-// =======================================================
-// FRESH GATE OPEN BUTTON FUNCTION (ROBUST FIX)
-// =======================================================
-document.addEventListener("DOMContentLoaded", () => {
-    const openGatesBtn = document.getElementById("open-gates-btn");
-    const introScreen = document.getElementById("intro-screen");
-
-    if (openGatesBtn && introScreen) {
-        openGatesBtn.addEventListener("click", (e) => {
-            e.preventDefault(); // Kisi bhi unwanted page refresh ko rokne ke liye
-            
-            console.log("Gate open button clicked successfully!");
-
-            // Intro screen ko fade out karne ke liye class add karo
-            introScreen.classList.add("fade-out");
-
-            // Optional: Agar future me check karna ho ki gate khul chuka hai
-            localStorage.setItem("gatesOpened", "true");
-        });
-    } else {
-        console.error("Error: '#open-gates-btn' ya '#intro-screen' DOM mein nahi mila! Ek baar HTML check karein.");
-    }
-});
-// =======================================================
