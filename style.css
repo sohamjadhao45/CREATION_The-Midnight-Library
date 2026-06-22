@@ -220,3 +220,13 @@ button:not(.nav-link):not(.btn-icon):not(.exit-focus-btn) { cursor: pointer; pad
 
 /* Line 211: System Alerts */
 .toast { position: fixed; bottom: 30px; right: 30px; background: var(--gold); color: #000; font-family: 'Cinzel'; font-weight: bold; padding: 12px 24px; border-radius: 4px; z-index: 9999999; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+@media (max-width: 600px) {
+    .bookshelf-row {
+        flex-wrap: wrap; /* Mobile par kitabein niche wali line mein adjust ho jayengi */
+        gap: 8px;
+    }
+    .book-spine {
+        width: 45px; /* Mobile par spine thoda sleek dikhega */
+        height: 180px;
+    }
+}
