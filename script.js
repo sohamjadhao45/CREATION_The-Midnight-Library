@@ -1,45 +1,35 @@
-./* =====================================================================
+/* =====================================================================
    THE MIDNIGHT LIBRARY ENGINE (THE HOSTEL FAREWELL EDITION - FIXED)
    Strict JSON Fetch | Zen Mode Mobile Fix | Global Gate Opener
 ===================================================================== */
 
-// === THE MIDNIGHT LIBRARY: GATE OPENING LOGIC ===
+// Global window object handling safely for Typewriter
+window.twMasterState = window.twMasterState || {};
+
+// === THE MIDNIGHT LIBRARY: MAIN SYSTEM INITIALIZER ===
 document.addEventListener("DOMContentLoaded", () => {
-    const gateBtn = document.getElementById('open-gates-btn');
-    const passportInput = document.getElementById('passport-input');
-    const introScreen = document.getElementById('intro-screen');
-    const pageTurnAudio = document.getElementById('audio-page-turn');
-    const ambientAudio = document.getElementById('audio-ambient');
-
-    if (gateBtn && introScreen) {
-        gateBtn.addEventListener('click', () => {
-            const visitorName = passportInput ? passportInput.value.trim() : "";
-
-            // Agar user ne bina naam likhe click kiya toh alert dega
-            if (visitorName === "") {
-                alert("Please enter your name, traveler.");
-                return;
-            }
-
-            // 1. Audio play karo (agar background block na ho)
-            if (pageTurnAudio) pageTurnAudio.play().catch(e => console.log("Audio block:", e));
-            if (ambientAudio) ambientAudio.play().catch(e => console.log("Ambient block:", e));
-
-            // 2. Intro screen par fade-out class lagao jo CSS mein bani hai
-            introScreen.classList.add('fade-out');
-
-            // 3. Kuch devices ke liye backup visibility fix
-            setTimeout(() => {
-                introScreen.style.display = 'none';
-            }, 1000);
-
-            console.log("Welcome to the Vault, " + visitorName);
-        });
-    } else {
-        console.error("Gate elements not found! Check your HTML IDs.");
+    
+    // Check if gates were opened in a previous session
+    if (localStorage.getItem("gatesOpened") === "true") {
+        const introScreen = document.getElementById("intro-screen");
+        if (introScreen) introScreen.style.display = 'none';
+        globalState.visitorName = localStorage.getItem("midnightVisitor") || "Wanderer";
+        
+        const greeting = document.getElementById("vault-greeting");
+        if(greeting) greeting.innerHTML = `Ah, <span style="color:var(--gold);">${globalState.visitorName}</span>... welcome to the Secret Vault.`;
+        const letterTitle = document.getElementById("reader-letter-title");
+        if(letterTitle) letterTitle.innerText = `A LETTER TO ${globalState.visitorName.toUpperCase()}`;
     }
-});
 
+    // Initialize Global Background Loops and Components
+    initUltimateUniverseBackground();
+    initClockAndAtmosphere();
+    initDynamicShadows();
+    initTimeCapsule();
+    initScrollProgressBar();
+    initLedger();
+    init1111Wish();
+    initAuthorsDesk();
 
     /* ======================================================
        1. STRICT JSON FETCHING (No hardcoded Fallbacks)
@@ -164,15 +154,20 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /* ======================================================
-       3. GLOBAL CLICK LISTENERS (Gate Open, Save, Share, Audio)
+       3. GLOBAL CLICK LISTENERS (Unified & Error Proof)
        ====================================================== */
     document.body.addEventListener('click', (e) => {
 
-        // FOOLPROOF GATE OPENER MERGED WITH SCOPE VARIABLES
+        // MASTER FOOLPROOF GATE OPENER 
         if(e.target.id === 'open-gates-btn') {
             e.preventDefault();
             const inputName = document.getElementById("passport-input");
-            let name = inputName && inputName.value.trim() !== "" ? inputName.value.trim() : "Wanderer";
+            let name = inputName ? inputName.value.trim() : "";
+            
+            if (name === "") {
+                alert("Please enter your name, traveler.");
+                return;
+            }
             
             localStorage.setItem("midnightVisitor", name);
             localStorage.setItem("gatesOpened", "true");
@@ -184,18 +179,25 @@ document.addEventListener("DOMContentLoaded", () => {
             if(letterTitle) letterTitle.innerText = `A LETTER TO ${name.toUpperCase()}`;
             
             const introScreen = document.getElementById("intro-screen");
-            if(introScreen) {
-                introScreen.classList.add("fade-out");
-            }
-            
-            if(audioAmbient && !globalState.isAudioPlaying) {
-                audioAmbient.volume = 0.2;
-                audioAmbient.play().catch(()=>{});
+            const pageTurnAudio = document.getElementById('audio-page-turn');
+            const ambientAudio = document.getElementById('audio-ambient');
+
+            if(pageTurnAudio) pageTurnAudio.play().catch(err => console.log("Audio block:", err));
+            if(ambientAudio && !globalState.isAudioPlaying) {
+                ambientAudio.volume = 0.2;
+                ambientAudio.play().catch(()=>{});
                 globalState.isAudioPlaying = true;
             }
             
+            if(introScreen) {
+                introScreen.classList.add("fade-out");
+                setTimeout(() => {
+                    introScreen.style.display = 'none';
+                }, 1000);
+            }
+            
             showToast("🏛️ Welcome, " + name);
-            console.log("Gate open button processed safely inside scope!");
+            return;
         }
 
         // DOWNLOAD
@@ -275,6 +277,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.addEventListener("click", (e) => {
             if(e.target.classList.contains("trigger-nav") || e.target.classList.contains("nav-link") || e.target.classList.contains("star-node")) {
                 const targetPageId = e.target.getAttribute("data-target"); 
+                const audioPageTurn = document.getElementById('audio-page-turn');
                 if(audioPageTurn) { audioPageTurn.currentTime = 0; audioPageTurn.play().catch(()=>{}); }
                 executePageFlip(targetPageId);
             }
@@ -371,6 +374,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function toggleRain() {
         globalState.rainActive = !globalState.rainActive; const rCanvas = document.getElementById("rain-canvas");
+        const audioRain = document.getElementById('audio-rain');
         if(globalState.rainActive) { rCanvas?.classList.add("raining"); startRainVisuals(); showToast("🌧️ Storm simulation active..."); if(audioRain) { audioRain.volume = 0.4; audioRain.play(); } }
         else { rCanvas?.classList.remove("raining"); showToast("🌤️ Storm cleared."); if(audioRain) { audioRain.pause(); } }
     }
@@ -401,11 +405,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function initLibraryFeatures() {
-        const footerQuote = document.getElementById("quote-rotator"); if(footerQuote) footerQuote.innerText = quoteDatabase[Math.floor(Math.random() * quoteDatabase.length)];
+        if(typeof quoteDatabase !== "undefined" && document.getElementById("quote-rotator")) {
+            document.getElementById("quote-rotator").innerText = quoteDatabase[Math.floor(Math.random() * quoteDatabase.length)];
+        }
         const moonTrigger = document.getElementById("moon-phase");
         if(moonTrigger) { moonTrigger.addEventListener("click", () => { globalState.secretClicks++; if(globalState.secretClicks === 3) { globalState.hasTappedMoon = true; showToast("🏆 Achievement Unlocked: Moonwalker"); document.querySelector(".trigger-nav[data-target='page-secret']")?.click() || document.getElementById('page-secret')?.classList.add('active'); globalState.secretClicks = 0; } }); }
         const thoughtBtn = document.getElementById("reveal-thought-btn"); const thoughtDisplay = document.getElementById("midnight-thought-display");
-        if(thoughtBtn && thoughtDisplay) { thoughtBtn.addEventListener("click", () => { thoughtDisplay.style.opacity = 0; setTimeout(() => { thoughtDisplay.innerText = `"${midnightThoughts[Math.floor(Math.random() * midnightThoughts.length)]}"`; thoughtDisplay.style.opacity = 0.8; }, 300); }); }
+        if(thoughtBtn && thoughtDisplay && typeof midnightThoughts !== "undefined") { thoughtBtn.addEventListener("click", () => { thoughtDisplay.style.opacity = 0; setTimeout(() => { thoughtDisplay.innerText = `"${midnightThoughts[Math.floor(Math.random() * midnightThoughts.length)]}"`; thoughtDisplay.style.opacity = 0.8; }, 300); }); }
     }
 
     function initSecretKeyboardVault() {
