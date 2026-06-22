@@ -548,5 +548,40 @@ function createPoemCanvas(poem) {
         });
     }
 
-    function showToast(msg) { const container = document.getElementById("toast-container"); if(!container) return; const toast = document.createElement("div"); toast.className = "toast"; toast.innerText = msg; container.appendChild(toast); setTimeout(() => toast.remove(), 3500); }
+    function showToast(msg) { const container = document.getElementById("toast-container"); if(!container) return; const toast = document.createElement("div"); toast.className = "toast"; toast.innerText = msg; container.appendChild(toast); setTimeout(() => toast.remove(), 3500);}
+                                /* ======================================================
+       7. PWA INSTALLATION SYSTEM & LIFECYCLE
+       ====================================================== */
+    let deferredPrompt;
+    const installBtn = document.getElementById("btn-install-app");
+
+    window.addEventListener("beforeinstallprompt", (e) => {
+        // Browser prompt ko rokta hai aur apna button show karta hai
+        e.preventDefault();
+        deferredPrompt = e;
+        if (installBtn) {
+            installBtn.style.display = "block"; // Button ab gayab nahi hoga, dikhega!
+        }
+    });
+
+    if (installBtn) {
+        installBtn.addEventListener("click", async () => {
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === "accepted") {
+                showToast("✨ Sanctuary installed successfully!");
+            }
+            deferredPrompt = null;
+            installBtn.style.display = "none";
+        });
+    }
+
+    window.addEventListener("appinstalled", () => {
+        if (installBtn) installBtn.style.display = "none";
+        deferredPrompt = null;
+        showToast("🏛️ Welcome to the permanent library.");
+    });
+                             
+                            
 });
