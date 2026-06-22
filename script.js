@@ -1,6 +1,6 @@
 /* =====================================================================
    THE MIDNIGHT LIBRARY ENGINE (THE HOSTEL FAREWELL EDITION - FIXED)
-   Strict JSON Fetch | Zen Mode Mobile Fix | Global Gate Opener
+   Strict JSON Fetch | Zen Mode Mobile Fix | Direct Entrance Mode
 ===================================================================== */
 
 // Global window object handling safely for Typewriter
@@ -9,16 +9,25 @@ window.twMasterState = window.twMasterState || {};
 // === THE MIDNIGHT LIBRARY: MAIN SYSTEM INITIALIZER ===
 document.addEventListener("DOMContentLoaded", () => {
     
-    // Check if gates were opened in a previous session
-    if (localStorage.getItem("gatesOpened") === "true") {
-        const introScreen = document.getElementById("intro-screen");
-        if (introScreen) introScreen.style.display = 'none';
-        globalState.visitorName = localStorage.getItem("midnightVisitor") || "Wanderer";
-        
-        const greeting = document.getElementById("vault-greeting");
-        if(greeting) greeting.innerHTML = `Ah, <span style="color:var(--gold);">${globalState.visitorName}</span>... welcome to the Secret Vault.`;
-        const letterTitle = document.getElementById("reader-letter-title");
-        if(letterTitle) letterTitle.innerText = `A LETTER TO ${globalState.visitorName.toUpperCase()}`;
+    // Direct Entrance: Automatically set or retrieve default user state
+    if (!localStorage.getItem("midnightVisitor")) {
+        localStorage.setItem("midnightVisitor", "Wanderer");
+    }
+    localStorage.setItem("gatesOpened", "true");
+    globalState.visitorName = localStorage.getItem("midnightVisitor");
+    
+    // Setup static greeting layouts instantly
+    const greeting = document.getElementById("vault-greeting");
+    if(greeting) greeting.innerHTML = `Ah, <span style="color:var(--gold);">${globalState.visitorName}</span>... welcome to the Secret Vault.`;
+    const letterTitle = document.getElementById("reader-letter-title");
+    if(letterTitle) letterTitle.innerText = `A LETTER TO ${globalState.visitorName.toUpperCase()}`;
+
+    // Auto-play ambient sound if permitted, or it will trigger on first user interaction
+    const ambientAudio = document.getElementById('audio-ambient');
+    if(ambientAudio && !globalState.isAudioPlaying) {
+        ambientAudio.volume = 0.2;
+        ambientAudio.play().catch(()=>{ /* Autoplay block bypass */ });
+        globalState.isAudioPlaying = true;
     }
 
     // Initialize Global Background Loops and Components
@@ -47,6 +56,9 @@ document.addEventListener("DOMContentLoaded", () => {
         buildLibrarySystem();
         initLibraryFeatures();
         initSecretKeyboardVault();
+        
+        // Force fully active layout on the very first page
+        executePageFlip("page1");
     }
     loadLibraryData();
 
@@ -157,48 +169,6 @@ document.addEventListener("DOMContentLoaded", () => {
        3. GLOBAL CLICK LISTENERS (Unified & Error Proof)
        ====================================================== */
     document.body.addEventListener('click', (e) => {
-
-        // MASTER FOOLPROOF GATE OPENER 
-        if(e.target.id === 'open-gates-btn') {
-            e.preventDefault();
-            const inputName = document.getElementById("passport-input");
-            let name = inputName ? inputName.value.trim() : "";
-            
-            if (name === "") {
-                alert("Please enter your name, traveler.");
-                return;
-            }
-            
-            localStorage.setItem("midnightVisitor", name);
-            localStorage.setItem("gatesOpened", "true");
-            globalState.visitorName = name;
-            
-            const greeting = document.getElementById("vault-greeting");
-            if(greeting) greeting.innerHTML = `Ah, <span style="color:var(--gold);">${name}</span>... welcome to the Secret Vault.`;
-            const letterTitle = document.getElementById("reader-letter-title");
-            if(letterTitle) letterTitle.innerText = `A LETTER TO ${name.toUpperCase()}`;
-            
-            const introScreen = document.getElementById("intro-screen");
-            const pageTurnAudio = document.getElementById('audio-page-turn');
-            const ambientAudio = document.getElementById('audio-ambient');
-
-            if(pageTurnAudio) pageTurnAudio.play().catch(err => console.log("Audio block:", err));
-            if(ambientAudio && !globalState.isAudioPlaying) {
-                ambientAudio.volume = 0.2;
-                ambientAudio.play().catch(()=>{});
-                globalState.isAudioPlaying = true;
-            }
-            
-            if(introScreen) {
-                introScreen.classList.add("fade-out");
-                setTimeout(() => {
-                    introScreen.style.display = 'none';
-                }, 1000);
-            }
-            
-            showToast("🏛️ Welcome, " + name);
-            return;
-        }
 
         // DOWNLOAD
         if(e.target.classList.contains('download-poem-btn')) {
