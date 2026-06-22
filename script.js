@@ -15,7 +15,6 @@ if ('serviceWorker' in navigator) {
 }
 */
 
-
 document.addEventListener("DOMContentLoaded", () => {
     "use strict";
 
@@ -43,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
         initScrollProgressBar, initLedger, initDynamicShadows, initBookmarksDrawer, 
         initFavouritesDrawer, initTimeCapsule, initTouchRipple, init1111Wish, initAuthorsDesk
     ];
-    coreEngines.forEach(engine => { try { engine(); } catch (e) { console.error("Engine Blocked:", e); } });
+    coreEngines.forEach(engine => { try { engine(); } catch (e) { console.error("Engine Blocked:", engine.name, e); } });
 
     /* ======================================================
        1. STRICT JSON FETCHING (No hardcoded Fallbacks)
@@ -149,28 +148,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* ======================================================
        2. CANVAS HD DRAWING (HQ Share & Save - No Squish)
-       ====================================================== */
-    /* ======================================================
-   2. CANVAS HD DRAWING (HQ Share & Save - No Squish)
-====================================================== */
-function createPoemCanvas(poem) {
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-    canvas.width = 1080;
-    canvas.height = 1920;
+    ====================================================== */
+    function createPoemCanvas(poem) {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = 1080;
+        canvas.height = 1920;
 
-    ctx.fillStyle = globalState.activeTheme === "dark" ? "#0b0b0f" : "#e8dcc7";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = globalState.activeTheme === "dark" ? "#0b0b0f" : "#e8dcc7";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.strokeStyle = "#bfa46f";
-    ctx.lineWidth = 4;
+        ctx.strokeStyle = "#bfa46f";
+        ctx.lineWidth = 4;
 
-    // FIX 3: Adjusted width and height by subtracting 100 to keep a perfect 50px border on all sides.
-    ctx.strokeRect(50, 50, canvas.width - 100, canvas.height - 100);
+        // FIX 3: Adjusted width and height by subtracting 100 to keep a perfect 50px border on all sides.
+        ctx.strokeRect(50, 50, canvas.width - 100, canvas.height - 100);
 
-    // Yahan se aapka aage ka text draw karne ka logic as-is rahega...
-
-        
         ctx.fillStyle = "#bfa46f"; ctx.textAlign = "center"; 
         ctx.font = "bold 60px Cinzel, serif"; 
         ctx.fillText("THE MIDNIGHT LIBRARY", canvas.width / 2, 180);
@@ -206,7 +199,7 @@ function createPoemCanvas(poem) {
        ====================================================== */
     document.body.addEventListener('click', (e) => {
 
-        // GLOBAL GATE OPENER (100% Guaranteed tablet/mobile fix)
+        // GLOBAL GATE OPENER (100% Guaranteed fix with display:none)
         if(e.target.id === 'enter-library-btn') {
             const inputName = document.getElementById("visitor-name");
             let name = inputName && inputName.value.trim() !== "" ? inputName.value.trim() : "Wanderer";
@@ -219,13 +212,22 @@ function createPoemCanvas(poem) {
             if(letterTitle) letterTitle.innerText = `A LETTER TO ${name.toUpperCase()}`;
             
             const introScreen = document.getElementById("intro-screen");
-            if(introScreen) introScreen.classList.add("fade-out");
+            if(introScreen) {
+                // Smoothly fade out and then completely remove it from blocking the layout
+                introScreen.style.transition = "opacity 0.8s ease";
+                introScreen.style.opacity = "0";
+                setTimeout(() => {
+                    introScreen.style.display = "none";
+                }, 800);
+            }
             
             if(audioAmbient && !globalState.isAudioPlaying) {
                 audioAmbient.volume = 0.2;
                 audioAmbient.play().catch(()=>{});
                 globalState.isAudioPlaying = true;
             }
+            
+            showToast("🏛️ Welcome, " + name);
         }
 
         // DOWNLOAD
@@ -407,17 +409,18 @@ function createPoemCanvas(poem) {
     function initScrollProgressBar() { window.addEventListener("scroll", () => { let st = window.scrollY || document.documentElement.scrollTop; let sh = document.documentElement.scrollHeight - window.innerHeight; const prog = document.getElementById("reading-progress"); if(prog) prog.style.width = sh > 0 ? ((st / sh) * 100) + "%" : "0%"; }); }
 
     /* ======================================================
-       5. ZEN MODE (Auto-Scroll Mobile Bug Fixed), ATMOSPHERE & VISUALS
+       5. ZEN MODE & ATMOSPHERE & VISUALS
        ====================================================== */
-        let zenRAF;
+    let zenRAF;
     function smoothZenScroll() {
         if (globalState.zenModeActive) {
             let currentY = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop;
             window.scrollTo(0, currentY + 1);
             zenRAF = requestAnimationFrame(smoothZenScroll);
         }
+    } // FIXED: This missing bracket was breaking everything!
 
-           function initClockAndAtmosphere() {
+    function initClockAndAtmosphere() {
         const dateEl = document.getElementById("journal-date");
         if(dateEl) dateEl.innerText = `Journal Entry: ${new Date().toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })}`;
         const themeBtn = document.getElementById("theme-toggle");
@@ -430,41 +433,9 @@ function createPoemCanvas(poem) {
         const exitFocusBtn = document.getElementById("exit-focus-btn");
         function toggleFocus() { document.body.classList.toggle("reading-mode"); focusBtn.innerText = document.body.classList.contains("reading-mode") ? "👁️ Normal" : "📖 Focus"; }
         if(focusBtn) focusBtn.addEventListener("click", toggleFocus); if(exitFocusBtn) exitFocusBtn.addEventListener("click", toggleFocus);
-
-        // EXTRA SECURE CLICK FOR GATES (Direct window injection)
-        setTimeout(() => {
-            const finalBtn = document.getElementById("enter-library-btn");
-            if(finalBtn) {
-                finalBtn.onclick = function(e) {
-                    if(e) e.preventDefault();
-                    const inputName = document.getElementById("visitor-name");
-                    let name = inputName && inputName.value.trim() !== "" ? inputName.value.trim() : "Wanderer";
-                    localStorage.setItem("midnightVisitor", name);
-                    globalState.visitorName = name;
-                    
-                    const greeting = document.getElementById("vault-greeting");
-                    if(greeting) greeting.innerHTML = `Ah, <span style="color:var(--gold);">${name}</span>... welcome to the Secret Vault.`;
-                    
-                    const introScreen = document.getElementById("intro-screen");
-                    if(introScreen) {
-                        introScreen.style.opacity = "0";
-                        setTimeout(() => { introScreen.style.display = "none"; }, 800);
-                    }
-                    
-                    if(audioAmbient && !globalState.isAudioPlaying) {
-                        audioAmbient.volume = 0.2;
-                        audioAmbient.play().catch(()=>{});
-                        globalState.isAudioPlaying = true;
-                    }
-                    showToast("🏛️ Welcome, " + name);
-                };
-            }
-        }, 500);
     }
 
-    }
-
-           function toggleRain() {
+    function toggleRain() {
         globalState.rainActive = !globalState.rainActive;
         const rCanvas = document.getElementById("rain-canvas");
         if(globalState.rainActive) { rCanvas?.classList.add("raining"); startRainVisuals(); showToast("🌧️ Storm simulation active..."); if(audioRain) { audioRain.volume = 0.4; audioRain.play(); } }
@@ -561,18 +532,18 @@ function createPoemCanvas(poem) {
     }
 
     function showToast(msg) { const container = document.getElementById("toast-container"); if(!container) return; const toast = document.createElement("div"); toast.className = "toast"; toast.innerText = msg; container.appendChild(toast); setTimeout(() => toast.remove(), 3500);}
-                                /* ======================================================
+    
+    /* ======================================================
        7. PWA INSTALLATION SYSTEM & LIFECYCLE
        ====================================================== */
     let deferredPrompt;
     const installBtn = document.getElementById("btn-install-app");
 
     window.addEventListener("beforeinstallprompt", (e) => {
-        // Browser prompt ko rokta hai aur apna button show karta hai
         e.preventDefault();
         deferredPrompt = e;
         if (installBtn) {
-            installBtn.style.display = "block"; // Button ab gayab nahi hoga, dikhega!
+            installBtn.style.display = "block";
         }
     });
 
@@ -594,6 +565,4 @@ function createPoemCanvas(poem) {
         deferredPrompt = null;
         showToast("🏛️ Welcome to the permanent library.");
     });
-                             
-                            
 });
