@@ -416,9 +416,8 @@ function createPoemCanvas(poem) {
             window.scrollTo(0, currentY + 1);
             zenRAF = requestAnimationFrame(smoothZenScroll);
         }
-    }
 
-       function initClockAndAtmosphere() {
+           function initClockAndAtmosphere() {
         const dateEl = document.getElementById("journal-date");
         if(dateEl) dateEl.innerText = `Journal Entry: ${new Date().toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' })}`;
         const themeBtn = document.getElementById("theme-toggle");
@@ -432,54 +431,40 @@ function createPoemCanvas(poem) {
         function toggleFocus() { document.body.classList.toggle("reading-mode"); focusBtn.innerText = document.body.classList.contains("reading-mode") ? "👁️ Normal" : "📖 Focus"; }
         if(focusBtn) focusBtn.addEventListener("click", toggleFocus); if(exitFocusBtn) exitFocusBtn.addEventListener("click", toggleFocus);
 
-        // ZEN MODE HANDLER MOBILE FIX
-        const zenBtn = document.getElementById("zen-mode-toggle");
-        if(zenBtn) {
-            zenBtn.addEventListener("click", () => {
-                globalState.zenModeActive = !globalState.zenModeActive;
-                if (globalState.zenModeActive) {
-                    document.documentElement.style.scrollBehavior = 'auto';
-                    zenBtn.innerHTML = "🛑 Stop Zen";
-                    showToast("📜 Zen Mode: Auto-scroll activated.");
-                    zenRAF = requestAnimationFrame(smoothZenScroll);
-                } else {
-                    document.documentElement.style.scrollBehavior = 'smooth';
-                    zenBtn.innerHTML = "📜 Zen Mode";
-                    cancelAnimationFrame(zenRAF);
-                    showToast("🛑 Zen Mode paused.");
-                }
-            });
-        }
-
-        // DIRECT FIXED: OPEN THE GATES BUTTON CLICK TRIGGER
-        const realEnterBtn = document.getElementById("enter-library-btn");
-        if(realEnterBtn) {
-            realEnterBtn.addEventListener("click", (event) => {
-                event.stopPropagation(); // Ripple effects ko overwrite hone se rokega
-                const inputName = document.getElementById("visitor-name");
-                let name = inputName && inputName.value.trim() !== "" ? inputName.value.trim() : "Wanderer";
-                localStorage.setItem("midnightVisitor", name);
-                globalState.visitorName = name;
-                
-                const greeting = document.getElementById("vault-greeting");
-                if(greeting) greeting.innerHTML = `Ah, <span style="color:var(--gold);">${name}</span>... welcome to the Secret Vault.`;
-                const letterTitle = document.getElementById("reader-letter-title");
-                if(letterTitle) letterTitle.innerText = `A LETTER TO ${name.toUpperCase()}`;
-                
-                const introScreen = document.getElementById("intro-screen");
-                if(introScreen) introScreen.classList.add("fade-out");
-                
-                if(audioAmbient && !globalState.isAudioPlaying) {
-                    audioAmbient.volume = 0.2;
-                    audioAmbient.play().catch(()=>{});
-                    globalState.isAudioPlaying = true;
-                }
-            });
-        }
+        // EXTRA SECURE CLICK FOR GATES (Direct window injection)
+        setTimeout(() => {
+            const finalBtn = document.getElementById("enter-library-btn");
+            if(finalBtn) {
+                finalBtn.onclick = function(e) {
+                    if(e) e.preventDefault();
+                    const inputName = document.getElementById("visitor-name");
+                    let name = inputName && inputName.value.trim() !== "" ? inputName.value.trim() : "Wanderer";
+                    localStorage.setItem("midnightVisitor", name);
+                    globalState.visitorName = name;
+                    
+                    const greeting = document.getElementById("vault-greeting");
+                    if(greeting) greeting.innerHTML = `Ah, <span style="color:var(--gold);">${name}</span>... welcome to the Secret Vault.`;
+                    
+                    const introScreen = document.getElementById("intro-screen");
+                    if(introScreen) {
+                        introScreen.style.opacity = "0";
+                        setTimeout(() => { introScreen.style.display = "none"; }, 800);
+                    }
+                    
+                    if(audioAmbient && !globalState.isAudioPlaying) {
+                        audioAmbient.volume = 0.2;
+                        audioAmbient.play().catch(()=>{});
+                        globalState.isAudioPlaying = true;
+                    }
+                    showToast("🏛️ Welcome, " + name);
+                };
+            }
+        }, 500);
     }
- 
 
-    function toggleRain() {
+    }
+
+           function toggleRain() {
         globalState.rainActive = !globalState.rainActive;
         const rCanvas = document.getElementById("rain-canvas");
         if(globalState.rainActive) { rCanvas?.classList.add("raining"); startRainVisuals(); showToast("🌧️ Storm simulation active..."); if(audioRain) { audioRain.volume = 0.4; audioRain.play(); } }
