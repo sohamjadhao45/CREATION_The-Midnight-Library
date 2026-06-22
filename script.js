@@ -566,3 +566,27 @@ document.addEventListener("DOMContentLoaded", () => {
         showToast("🏛️ Welcome to the permanent library.");
     });
 });
+// =======================================================
+// FRESH GATE OPEN BUTTON FUNCTION (ROBUST FIX)
+// =======================================================
+document.addEventListener("DOMContentLoaded", () => {
+    const openGatesBtn = document.getElementById("open-gates-btn");
+    const introScreen = document.getElementById("intro-screen");
+
+    if (openGatesBtn && introScreen) {
+        openGatesBtn.addEventListener("click", (e) => {
+            e.preventDefault(); // Kisi bhi unwanted page refresh ko rokne ke liye
+            
+            console.log("Gate open button clicked successfully!");
+
+            // Intro screen ko fade out karne ke liye class add karo
+            introScreen.classList.add("fade-out");
+
+            // Optional: Agar future me check karna ho ki gate khul chuka hai
+            localStorage.setItem("gatesOpened", "true");
+        });
+    } else {
+        console.error("Error: '#open-gates-btn' ya '#intro-screen' DOM mein nahi mila! Ek baar HTML check karein.");
+    }
+});
+// =======================================================
