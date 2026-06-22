@@ -69,8 +69,8 @@
     </div> 
   </div>
 
-      <div id="intro-screen"> 
-    <div class="intro-content"> 
+    <div id="intro-screen" style="z-index: 9999999 !important; position: fixed; width: 100%; height: 100%;"> 
+    <div class="intro-content" style="position: relative; z-index: 10000000 !important;"> 
       <h1 class="intro-title moon-glow">CREATION</h1> 
       <div class="intro-line"></div>  
       <div class="intro-prose"> 
@@ -78,16 +78,17 @@
         <p class="intro-highlight">Enter your name, dear traveler, to open the heavy gates of the vault.</p> 
       </div> 
       
-      <div style="margin-bottom: 20px; width: 100%; max-width: 300px;">
-        <input type="text" id="visitor-name" class="passport-input" placeholder="Your Name..." autocomplete="off">
+      <div style="margin-bottom: 20px; width: 100%; max-width: 300px; position: relative; z-index: 10000000 !important;">
+        <input type="text" id="visitor-name" class="passport-input" placeholder="Your Name..." autocomplete="off" style="position: relative; z-index: 10000000 !important;">
       </div>
 
-      <div style="display:flex; flex-direction:column; gap:15px; margin-top:20px; align-items:center; width:100%; max-width:300px;"> 
-        <button id="enter-library-btn" class="btn-solid" style="width:100%;">OPEN THE GATES</button> 
-        <button id="btn-install-app" class="btn-outline" style="display:none; width:100%;">Install Sanctuary App</button> 
+      <div style="display:flex; flex-direction:column; gap:15px; margin-top:20px; align-items:center; width:100%; max-width:300px; position: relative; z-index: 10000000 !important;"> 
+        <button id="enter-library-btn" class="btn-solid" style="width:100%; position: relative; z-index: 10000005 !important; pointer-events: auto !important; cursor: pointer !important;">OPEN THE GATES</button> 
+        <button id="btn-install-app" class="btn-outline" style="display:block; width:100%; position: relative; z-index: 10000005 !important; pointer-events: auto !important; cursor: pointer !important;">Install Sanctuary App</button> 
       </div> 
     </div> 
   </div>
+    
 
 
 
