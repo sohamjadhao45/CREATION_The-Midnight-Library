@@ -6,8 +6,10 @@ const urlsToCache = [
     '/index.html', 
     '/style.css', 
     '/script.js', 
+    '/poems.json', // Ise wapas add kar diya
     '/manifest.json'
 ];
+
 
 self.addEventListener('install', (e) => {
     self.skipWaiting();
