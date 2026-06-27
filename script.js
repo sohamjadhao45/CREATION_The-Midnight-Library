@@ -1,30 +1,28 @@
 /* =====================================================================
    THE MIDNIGHT LIBRARY ENGINE (ULTIMATE PRO EDITION)
-   Linter-Safe | Interactive Click Wax Seal | 11:11 Easter Egg | Feedback
+   Linter-Safe | Interactive Wax Seal | 11:11 Easter Egg | Dynamic Fetch
    ===================================================================== */
 
 const twStates = new WeakMap();
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     "use strict";
 
-    /* ======================================================
-       📜 POEM DATABASE (AUTO-BUILD)
-       ====================================================== */
-    const POEM_DATABASE = [
-        {
-            chapterLabel: "CHAPTER I", spineLabel: "ANCHOR - CH.I", title: "ANCHOR", subtitle: "A TRIBUTE TO MY FATHER", themeTag: "❤️ Family & Love", dateText: "A memory from 5 May, 2026", signature: "-- Soham Jadhao<br>Love You Pappa !!!!",
-            text: `You're my truth, my life,\nmy beginning, my end.\nYou know my weaknesses and flaws,\nyet you're my buddy and my friend.\n\nThis relation is not only of blood,\nbut of emotions and linked hearts too.\nAmong all the bonds I've ever known,\nyou're a part of me, I'm a part of you.\n\nAs love has no age limit,\nthat's why my love for you stays true.\nYour morals and your way of seeing life\nhave taught me something new.\n\nWords are too few to describe you,\neven calamities fear facing you.\nYou're present in my every breath,\nand I know what you truly mean to me.`,
-            whispers: [ { word: "friend", hidden: "mirror" }, { word: "blood", hidden: "soul" } ]
-        },
-        {
-            chapterLabel: "CHAPTER II", spineLabel: "SPORTSMAN - CH.II", title: "SPORTSMAN<br>SPIRIT", subtitle: "THE SPIRIT OF EXCELLENCE", themeTag: "⚡ Motivation", dateText: "Written on 14 March 2026", signature: "— Soham Jadhao",
-            text: `Ignite your fire.\nLearn from every downfall,\nBouncers will come and go,\nDon't fear the pavilion's call.\n\nNever get upset,\nFace every yorker,\nBuild your own present,\nYour ace will be your marker.\n\nSometimes a hundred,\nSometimes a duck,\nGive your best always,\nAnd leave the rest to luck.\n\nThe past is your best teacher,\nThe future, an unseen creature,\nSpread your wings in the present sky,\nEvery great score begins with a try.`,
-            whispers: [ { word: "duck", hidden: "lesson" } ]
-        }
-    ];
+    // 1. Ek khali array banao jisme JSON ka data aayega
+    let POEM_DATABASE = [];
 
-    const UPCOMING_CHAPTER = { chapterNum: "III", title: "THE COSMOS WITHIN" };
+    // 2. Fetch karke JSON file se data nikalo
+    try {
+        const response = await fetch('poems.json');
+        if (!response.ok) throw new Error("Network response was not ok");
+        POEM_DATABASE = await response.json();
+    } catch (error) {
+        console.error("Vault is sealed. Could not load poems:", error);
+        // Fallback agar json load na ho
+        POEM_DATABASE = []; 
+    }
+
+    const UPCOMING_CHAPTER = { chapterNum: "IV", title: "THE COSMOS WITHIN" };
 
     const globalState = { activeTheme: "dark", isAudioPlaying: false, vortexActive: false, secretClicks: 0, notesVisitCount: 0, secretPassword: "", hasTappedMoon: false, hasTypedWord: false, rainActive: false, visitorName: "Wanderer", elevenElevenTriggered: false, zenModeActive: false };
 
@@ -37,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const audioRain = document.getElementById("audio-rain");
     const audioAmbient = document.getElementById("audio-ambient");
 
-    // Initialize all features
+    // Initialize all features (Ye saare functions ab JSON fetch hone ke baad challenge)
     buildLibrarySystem(); 
     initTimeGreeting();
     initClockAndAtmosphere(); 
@@ -190,7 +188,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if(btnExplore) btnExplore.setAttribute("data-target", "poem-page-1"); 
         
         const btnFragPrev = document.getElementById("btn-frag-prev");
-        if(btnFragPrev) btnFragPrev.setAttribute("data-target", `poem-page-${POEM_DATABASE.length}`);
+        if(btnFragPrev && POEM_DATABASE.length > 0) btnFragPrev.setAttribute("data-target", `poem-page-${POEM_DATABASE.length}`);
         
         bookshelf.innerHTML += `<div class="book-spine spine-locked interactive-locked" title="Some stories are still being lived."><div class="spine-text">${UPCOMING_CHAPTER.title}</div><div class="spine-subtext" style="position: absolute; bottom: 10px; width: 100%; text-align: center; font-size: 8px; color: rgba(255,255,255,0.4);">UNAVAILABLE</div></div>`;
 
@@ -198,11 +196,17 @@ document.addEventListener("DOMContentLoaded", () => {
         if(starMap) {
             let svgLines = ''; let starsHtml = '';
             for (let i = 0; i < POEM_DATABASE.length; i++) {
-                let p1 = starCoords[i]; starsHtml += `<div class="star-node active-star trigger-nav" data-target="poem-page-${i+1}" title="${POEM_DATABASE[i].dateText} - ${POEM_DATABASE[i].title.replace('<br>',' ')}" style="top: ${p1.top}%; left: ${p1.left}%;"></div>`;
-                if (i < POEM_DATABASE.length - 1) { let p2 = starCoords[i+1]; svgLines += `<line x1="${p1.left}%" y1="${p1.top}%" x2="${p2.left}%" y2="${p2.top}%" stroke="rgba(191,164,111,0.4)" stroke-width="1" stroke-dasharray="4" />`; }
+                // Modulo use kiya hai incase poems > coordinates
+                let p1 = starCoords[i % starCoords.length]; 
+                starsHtml += `<div class="star-node active-star trigger-nav" data-target="poem-page-${i+1}" title="${POEM_DATABASE[i].dateText} - ${POEM_DATABASE[i].title.replace('<br>',' ')}" style="top: ${p1.top}%; left: ${p1.left}%;"></div>`;
+                if (i < POEM_DATABASE.length - 1) { 
+                    let p2 = starCoords[(i+1) % starCoords.length]; 
+                    svgLines += `<line x1="${p1.left}%" y1="${p1.top}%" x2="${p2.left}%" y2="${p2.top}%" stroke="rgba(191,164,111,0.4)" stroke-width="1" stroke-dasharray="4" />`; 
+                }
             }
             if (POEM_DATABASE.length > 0) {
-                let lastStar = starCoords[POEM_DATABASE.length - 1]; let lockedStar = starCoords[POEM_DATABASE.length];
+                let lastStar = starCoords[(POEM_DATABASE.length - 1) % starCoords.length]; 
+                let lockedStar = starCoords[POEM_DATABASE.length % starCoords.length];
                 svgLines += `<line x1="${lastStar.left}%" y1="${lastStar.top}%" x2="${lockedStar.left}%" y2="${lockedStar.top}%" stroke="rgba(191,164,111,0.1)" stroke-width="1" stroke-dasharray="4" />`;
                 starsHtml += `<div class="star-node pulse-star interactive-locked" title="Awaiting Completion..." style="top: ${lockedStar.top}%; left: ${lockedStar.left}%;"></div>`;
             }
